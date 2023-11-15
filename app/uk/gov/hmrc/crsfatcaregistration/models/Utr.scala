@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.crsfatcaregistration.config
+package uk.gov.hmrc.crsfatcaregistration.models
 
-import com.google.inject.AbstractModule
-
-class Module extends AbstractModule {
-
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
-
-}
+case class Utr(value: String)
