@@ -16,11 +16,21 @@
 
 package uk.gov.hmrc.crsfatcaregistration.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject() (config: Configuration) {
+class AppConfig @Inject() (
+  config: Configuration,
+  servicesConfig: ServicesConfig
+) {
 
-  val appName: String = config.get[String]("appName")
+  def baseUrl(serviceName: String): String =
+    s"${servicesConfig.baseUrl(serviceName)}${servicesConfig.getString(s"microservice.services.$serviceName.context")}"
+
+  val bearerToken: String => String = (serviceName: String) => config.get[String](s"microservice.services.$serviceName.bearer-token")
+  val environment: String => String = (serviceName: String) => config.get[String](s"microservice.services.$serviceName.environment")
+
 }

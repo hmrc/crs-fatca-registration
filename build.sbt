@@ -8,6 +8,7 @@ lazy val microservice = Project("crs-fatca-registration", file("."))
     majorVersion        := 0,
     scalaVersion        := "2.13.10",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    PlayKeys.playDefaultPort := 10031,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
     ThisBuild / scalafmtOnCompile.withRank(KeyRanks.Invisible) := true,

@@ -1,2 +1,12 @@
 # microservice specific routes
 
+# with id
+POST    /registration/individual/utr           uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withUTR
+POST    /registration/individual/nino          uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withNino
+POST    /registration/organisation/utr         uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withOrgUTR
+# without id
+POST    /registration/individual/noId          uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withoutID
+POST    /registration/organisation/noId        uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withoutOrgID
+
+POST    /subscription/create-subscription      uk.gov.hmrc.crsfatcaregistration.controllers.SubscriptionController.createSubscription
+POST    /subscription/read-subscription        uk.gov.hmrc.crsfatcaregistration.controllers.SubscriptionController.readSubscription
