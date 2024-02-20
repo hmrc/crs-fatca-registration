@@ -38,4 +38,17 @@ class SubscriptionRequestSpec extends AnyFreeSpec with Generators with OptionVal
     }
   }
 
+  "SubscriptionResponse" - {
+    "must serialise and match example response" in {
+      Json
+        .obj(
+          "success" -> Json.obj(
+            "processingDate" -> "2001-12-17T09:30:47Z",
+            "subscriptionID" -> "XACRS0000123456"
+          )
+        )
+        .as[SubscriptionResponse] mustBe SubscriptionResponse("XACRS0000123456", "2001-12-17T09:30:47Z")
+    }
+  }
+
 }

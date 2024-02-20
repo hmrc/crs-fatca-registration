@@ -188,22 +188,6 @@ object SecondaryContact {
 
 }
 
-case class RequestDetail(
-  IDType: String,
-  IDNumber: String,
-  tradingName: Option[String],
-  isGBUser: Boolean,
-  primaryContact: PrimaryContact,
-  secondaryContact: Option[SecondaryContact]
-)
-
-object RequestDetail {
-
-  implicit val requestDetailFormats: OFormat[RequestDetail] =
-    Json.format[RequestDetail]
-
-}
-
 case class RequestParameters(paramName: String, paramValue: String)
 
 object RequestParameters {
@@ -214,7 +198,12 @@ object RequestParameters {
 }
 
 case class SubscriptionRequest(
-  requestDetail: RequestDetail
+  idType: String,
+  idNumber: String,
+  tradingName: Option[String],
+  isGBUser: Boolean,
+  primaryContact: PrimaryContact,
+  secondaryContact: Option[SecondaryContact]
 )
 
 object SubscriptionRequest {
@@ -241,29 +230,9 @@ object ReturnParameters {
   implicit val format: Format[ReturnParameters] = Json.format[ReturnParameters]
 }
 
-case class ResponseCommon(
-  status: String,
-  statusText: Option[String],
-  processingDate: String,
-  returnParameters: Option[Seq[ReturnParameters]]
-)
-
-object ResponseCommon {
-  implicit val format: Format[ResponseCommon] = Json.format[ResponseCommon]
-}
-
-case class ResponseDetailSubscription(subscriptionID: String)
-
-object ResponseDetailSubscription {
-
-  implicit val format: OFormat[ResponseDetailSubscription] =
-    Json.format[ResponseDetailSubscription]
-
-}
-
 case class SubscriptionResponse(
-  responseCommon: ResponseCommon,
-  responseDetail: ResponseDetailSubscription
+  subscriptionID: String,
+  processingDate: String
 )
 
 object SubscriptionResponse {
@@ -271,10 +240,10 @@ object SubscriptionResponse {
   implicit val reads: Reads[SubscriptionResponse] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \ "responseCommon").read[ResponseCommon] and
-        (__ \ "responseDetail").read[ResponseDetailSubscription]
+      (__ \\ "subscriptionID").read[String] and
+        (__ \\ "processingDate").read[String]
     )(
-      (responseCommon, responseDetail) => SubscriptionResponse(responseCommon, responseDetail)
+      (subscriptionID, processingDate) => SubscriptionResponse(subscriptionID, processingDate)
     )
   }
 

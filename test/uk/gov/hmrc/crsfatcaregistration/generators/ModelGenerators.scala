@@ -269,30 +269,16 @@ trait ModelGenerators {
       } yield SecondaryContact(contactInformation)
     }
 
-  implicit val arbitraryRequestDetail: Arbitrary[RequestDetail] = Arbitrary {
-    for {
-      idType           <- arbitrary[String]
-      idNumber         <- arbitrary[String]
-      tradingName      <- Gen.option(arbitrary[String])
-      isGBUser         <- arbitrary[Boolean]
-      primaryContact   <- arbitrary[PrimaryContact]
-      secondaryContact <- Gen.option(arbitrary[SecondaryContact])
-    } yield RequestDetail(
-      IDType = idType,
-      IDNumber = idNumber,
-      tradingName = tradingName,
-      isGBUser = isGBUser,
-      primaryContact = primaryContact,
-      secondaryContact = secondaryContact
-    )
-  }
-
   implicit val arbitraryCreateSubscriptionRequest: Arbitrary[CreateSubscriptionRequest] =
     Arbitrary {
       for {
-        requestDetail <- arbitrary[RequestDetail]
+        idType         <- arbitrary[String]
+        idNumber       <- arbitrary[String]
+        tradingName    <- Gen.option(arbitrary[String])
+        isGBUser       <- arbitrary[Boolean]
+        primaryContact <- arbitrary[PrimaryContact]
       } yield CreateSubscriptionRequest(
-        SubscriptionRequest(requestDetail)
+        SubscriptionRequest(idType, idNumber, tradingName, isGBUser, primaryContact, None)
       )
     }
 
@@ -301,8 +287,8 @@ trait ModelGenerators {
       idType   <- arbitrary[String]
       idNumber <- arbitrary[String]
     } yield ReadSubscriptionRequestDetail(
-      IDType = idType,
-      IDNumber = idNumber
+      idType = idType,
+      idNumber = idNumber
     )
   }
 
