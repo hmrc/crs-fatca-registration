@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,21 +202,6 @@ trait ModelGenerators {
       } yield WithIDOrganisation(organisationName, organisationType)
     }
 
-  implicit val arbitraryRequestCommonForSubscription: Arbitrary[RequestCommonForSubscription] =
-    Arbitrary {
-      for {
-        receiptDate        <- arbitrary[String]
-        acknowledgementRef <- stringsWithMaxLength(stringMaxLen)
-      } yield RequestCommonForSubscription(
-        regime = "CRSFATCA",
-        conversationID = None,
-        receiptDate = receiptDate,
-        acknowledgementReference = acknowledgementRef,
-        originatingSystem = "MDTP",
-        None
-      )
-    }
-
   implicit val arbitraryIndividualDetails: Arbitrary[IndividualDetails] =
     Arbitrary {
       for {
@@ -305,10 +290,9 @@ trait ModelGenerators {
   implicit val arbitraryCreateSubscriptionRequest: Arbitrary[CreateSubscriptionRequest] =
     Arbitrary {
       for {
-        requestCommon <- arbitrary[RequestCommonForSubscription]
         requestDetail <- arbitrary[RequestDetail]
       } yield CreateSubscriptionRequest(
-        SubscriptionRequest(requestCommon, requestDetail)
+        SubscriptionRequest(requestDetail)
       )
     }
 
@@ -325,10 +309,9 @@ trait ModelGenerators {
   implicit val arbitraryReadSubscriptionRequest: Arbitrary[DisplaySubscriptionRequest] =
     Arbitrary {
       for {
-        requestCommon <- arbitrary[RequestCommonForSubscription]
         requestDetail <- arbitrary[ReadSubscriptionRequestDetail]
       } yield DisplaySubscriptionRequest(
-        DisplaySubscriptionDetails(requestCommon, requestDetail)
+        DisplaySubscriptionDetails(requestDetail)
       )
     }
 

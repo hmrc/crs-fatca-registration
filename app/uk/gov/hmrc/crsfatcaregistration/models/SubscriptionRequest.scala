@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -213,24 +213,7 @@ object RequestParameters {
 
 }
 
-case class RequestCommonForSubscription(
-  regime: String,
-  conversationID: Option[String] = None,
-  receiptDate: String,
-  acknowledgementReference: String,
-  originatingSystem: String,
-  requestParameters: Option[Seq[RequestParameters]]
-)
-
-object RequestCommonForSubscription {
-
-  implicit val requestCommonForSubscriptionFormats: OFormat[RequestCommonForSubscription] =
-    Json.format[RequestCommonForSubscription]
-
-}
-
 case class SubscriptionRequest(
-  requestCommon: RequestCommonForSubscription,
   requestDetail: RequestDetail
 )
 
