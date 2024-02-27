@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.crsfatcaregistration.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, request, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -49,6 +50,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
     "create subscription" - {
       "must return status as OK for submission of Subscription" in {
         stubResponse(
+          RequestMethod.POST,
           "/dac6/dct70c/v1",
           OK
         )
@@ -65,6 +67,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
         forAll(arbitrary[CreateSubscriptionRequest], errorCodes) {
           (sub, errorCode) =>
             stubResponse(
+              RequestMethod.POST,
               "/dac6/dct70c/v1",
               errorCode
             )
@@ -78,6 +81,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
     "read subscription" - {
       "must return status as OK for read Subscription" in {
         stubResponse(
+          RequestMethod.GET,
           "/dac6/dct70d/v1",
           OK
         )
@@ -94,6 +98,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
         forAll(arbitrary[DisplaySubscriptionRequest], errorCodes) {
           (sub, errorCode) =>
             stubResponse(
+              RequestMethod.GET,
               "/dac6/dct70d/v1",
               errorCode
             )
@@ -106,11 +111,12 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
   }
 
   private def stubResponse(
+    requestMethod: RequestMethod,
     expectedUrl: String,
     expectedStatus: Int
   ): StubMapping =
     server.stubFor(
-      post(urlEqualTo(expectedUrl))
+      request(requestMethod.getName, urlEqualTo(expectedUrl))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)
