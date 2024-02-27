@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.crsfatcaregistration.generators
 
-import java.time.LocalDate
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.crsfatcaregistration.models._
 import uk.gov.hmrc.domain.Nino
+
+import java.time.LocalDate
 
 trait ModelGenerators {
   self: Generators =>
@@ -265,25 +266,6 @@ trait ModelGenerators {
     )
   }
 
-  implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
-    for {
-      contactInformation <- Gen.oneOf(
-        arbitrary[ContactInformationForIndividual],
-        arbitrary[ContactInformationForIndividual]
-      )
-    } yield PrimaryContact(contactInformation)
-  }
-
-  implicit val arbitrarySecondaryContact: Arbitrary[SecondaryContact] =
-    Arbitrary {
-      for {
-        contactInformation <- Gen.oneOf(
-          arbitrary[ContactInformationForIndividual],
-          arbitrary[ContactInformationForIndividual]
-        )
-      } yield SecondaryContact(contactInformation)
-    }
-
   implicit val arbitraryRequestDetail: Arbitrary[RequestDetail] = Arbitrary {
     for {
       idType           <- arbitrary[String]
@@ -330,6 +312,37 @@ trait ModelGenerators {
       } yield DisplaySubscriptionRequest(
         DisplaySubscriptionDetails(requestCommon, requestDetail)
       )
+    }
+
+  implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
+    for {
+      contactInformation <- Gen.oneOf(
+        arbitrary[ContactInformationForIndividual],
+        arbitrary[ContactInformationForIndividual]
+      )
+    } yield PrimaryContact(contactInformation)
+  }
+
+  implicit val arbitrarySecondaryContact: Arbitrary[SecondaryContact] =
+    Arbitrary {
+      for {
+        contactInformation <- Gen.oneOf(
+          arbitrary[ContactInformationForIndividual],
+          arbitrary[ContactInformationForIndividual]
+        )
+      } yield SecondaryContact(contactInformation)
+    }
+
+  implicit val arbitraryUpdateSubscriptionRequest: Arbitrary[UpdateSubscriptionRequest] =
+    Arbitrary {
+      for {
+        idType           <- arbitrary[String]
+        idNumber         <- arbitrary[String]
+        gbUser           <- arbitrary[Boolean]
+        tradingName      <- Gen.option(arbitrary[String])
+        primaryContact   <- arbitrary[PrimaryContact]
+        secondaryContact <- Gen.option(arbitrary[SecondaryContact])
+      } yield UpdateSubscriptionRequest(idType, idNumber, gbUser, primaryContact, tradingName, secondaryContact)
     }
 
 }

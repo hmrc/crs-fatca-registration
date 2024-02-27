@@ -25,8 +25,26 @@ lazy val microservice = Project("crs-fatca-registration", file("."))
         "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
       )
   )
+  .settings(inConfig(Test)(testSettings): _*)
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
+  .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
+
+lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+  fork := true,
+  unmanagedSourceDirectories += baseDirectory.value / "test-common"
+)
+
+lazy val itSettings = integrationTestSettings() ++ Seq(
+  unmanagedSourceDirectories := Seq(
+    baseDirectory.value / "it",
+    baseDirectory.value / "test-common"
+  ),
+  unmanagedResourceDirectories := Seq(
+    baseDirectory.value / "it" / "resources"
+  ),
+  parallelExecution := false,
+  fork := true
+)
 

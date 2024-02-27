@@ -16,24 +16,41 @@
 
 package uk.gov.hmrc.crsfatcaregistration.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.concurrent.IntegrationPatience
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
+import play.api.{Application, Configuration}
 import play.api.http.Status._
-import uk.gov.hmrc.crsfatcaregistration.base.{SpecBase, WireMockServerHandler}
+import uk.gov.hmrc.crsfatcaregistration.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.generators.Generators
 import uk.gov.hmrc.crsfatcaregistration.models.{RegisterWithID, RegisterWithoutId}
+import uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class RegistrationConnectorIntegrationSpec extends SpecBase with IntegrationPatience with WireMockHelper with Generators with ScalaCheckPropertyChecks {
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    startWireMock()
+  }
+
+  override def afterAll(): Unit = {
+    stopWireMock()
+    super.afterAll()
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    resetWireMock()
+  }
 
   override lazy val app: Application = applicationBuilder()
     .configure(
-      conf = "microservice.services.register-with-id.port" -> server.port(),
-      "microservice.services.register-without-id.port" -> server.port()
+      Configuration(
+        "microservice.services.register-with-id.port"    -> wireMockServer.port(),
+        "microservice.services.register-without-id.port" -> wireMockServer.port()
+      )
     )
     .build()
 
@@ -46,10 +63,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         forAll(arbitrary[RegisterWithoutId]) {
           sub =>
-            stubResponse(
-              "/dac6/dct70a/v1",
-              OK
-            )
+            stubResponse("/dac6/dct70a/v1", OK)
 
             val result = connector.sendWithoutIDInformation(sub)
             result.futureValue.status mustBe OK
@@ -60,10 +74,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         forAll(arbitrary[RegisterWithoutId]) {
           sub =>
-            stubResponse(
-              "/dac6/dct70a/v1",
-              BAD_REQUEST
-            )
+            stubResponse("/dac6/dct70a/v1", BAD_REQUEST)
 
             val result = connector.sendWithoutIDInformation(sub)
             result.futureValue.status mustBe BAD_REQUEST
@@ -74,10 +85,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         forAll(arbitrary[RegisterWithoutId]) {
           sub =>
-            stubResponse(
-              "/dac6/dct70a/v1",
-              INTERNAL_SERVER_ERROR
-            )
+            stubResponse("/dac6/dct70a/v1", INTERNAL_SERVER_ERROR)
 
             val result = connector.sendWithoutIDInformation(sub)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
@@ -90,10 +98,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         forAll(arbitrary[RegisterWithID]) {
           sub =>
-            stubResponse(
-              "/dac6/dct70b/v1",
-              OK
-            )
+            stubResponse("/dac6/dct70b/v1", OK)
 
             val result = connector.sendWithID(sub)
             result.futureValue.status mustBe OK
@@ -104,10 +109,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         forAll(arbitrary[RegisterWithID]) {
           sub =>
-            stubResponse(
-              "/dac6/dct70b/v1",
-              BAD_REQUEST
-            )
+            stubResponse("/dac6/dct70b/v1", BAD_REQUEST)
 
             val result = connector.sendWithID(sub)
             result.futureValue.status mustBe BAD_REQUEST
@@ -118,10 +120,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         forAll(arbitrary[RegisterWithID]) {
           sub =>
-            stubResponse(
-              "/dac6/dct70b/v1",
-              INTERNAL_SERVER_ERROR
-            )
+            stubResponse("/dac6/dct70b/v1", INTERNAL_SERVER_ERROR)
 
             val result = connector.sendWithID(sub)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
@@ -129,17 +128,5 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
       }
     }
   }
-
-  private def stubResponse(
-    expectedUrl: String,
-    expectedStatus: Int
-  ): StubMapping =
-    server.stubFor(
-      post(urlEqualTo(expectedUrl))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-        )
-    )
 
 }

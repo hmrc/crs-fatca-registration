@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.crsfatcaregistration.base
-
-/*
- * Copyright 2020 HM Revenue & Customs
- *
- */
+package uk.gov.hmrc.crsfatcaregistration
 
 import org.mockito.MockitoSugar
-import org.scalatest._
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.play.guice._
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, OptionValues, TryValues}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
@@ -43,8 +38,9 @@ trait SpecBase
     with OptionValues
     with TryValues
     with ScalaFutures
-    with IntegrationPatience
-    with MockitoSugar {
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll {
 
   def injector: Injector = app.injector
 
@@ -61,7 +57,7 @@ trait SpecBase
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        Configuration("metrics.enabled" -> "false", "auditing.enabled" -> false)
+        Configuration("metrics.enabled" -> false, "auditing.enabled" -> false)
       )
       .overrides()
 
