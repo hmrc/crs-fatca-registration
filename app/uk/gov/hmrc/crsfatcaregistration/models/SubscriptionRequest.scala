@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 sealed trait ContactInformation
 
-case class OrganisationDetails(organisationName: String)
+case class OrganisationDetails(name: String)
 
 object OrganisationDetails {
 
@@ -197,24 +197,13 @@ object RequestParameters {
 
 }
 
-case class SubscriptionRequest(
+case class CreateSubscriptionRequest(
   idType: String,
   idNumber: String,
   tradingName: Option[String],
-  isGBUser: Boolean,
+  gbUser: Boolean,
   primaryContact: PrimaryContact,
   secondaryContact: Option[SecondaryContact]
-)
-
-object SubscriptionRequest {
-
-  implicit val format: OFormat[SubscriptionRequest] =
-    Json.format[SubscriptionRequest]
-
-}
-
-case class CreateSubscriptionRequest(
-  createSubscriptionRequest: SubscriptionRequest
 )
 
 object CreateSubscriptionRequest {

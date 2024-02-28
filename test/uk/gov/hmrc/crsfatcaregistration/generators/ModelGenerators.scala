@@ -219,7 +219,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         name <- arbitrary[String]
-      } yield OrganisationDetails(organisationName = name)
+      } yield OrganisationDetails(name = name)
     }
 
   implicit val arbitraryContactInformationForIndividual: Arbitrary[ContactInformationForIndividual] = Arbitrary {
@@ -275,11 +275,9 @@ trait ModelGenerators {
         idType         <- arbitrary[String]
         idNumber       <- arbitrary[String]
         tradingName    <- Gen.option(arbitrary[String])
-        isGBUser       <- arbitrary[Boolean]
+        gbUser         <- arbitrary[Boolean]
         primaryContact <- arbitrary[PrimaryContact]
-      } yield CreateSubscriptionRequest(
-        SubscriptionRequest(idType, idNumber, tradingName, isGBUser, primaryContact, None)
-      )
+      } yield CreateSubscriptionRequest(idType, idNumber, tradingName, gbUser, primaryContact, None)
     }
 
   implicit val arbitraryReadSubscriptionRequestDetail: Arbitrary[ReadSubscriptionRequestDetail] = Arbitrary {
