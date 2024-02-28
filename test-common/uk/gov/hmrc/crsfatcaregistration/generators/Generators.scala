@@ -18,7 +18,7 @@ package uk.gov.hmrc.crsfatcaregistration.generators
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-import org.scalacheck.Arbitrary.{arbitrary, _}
+import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -67,7 +67,7 @@ trait Generators extends ModelGenerators {
     )
 
   def nonNumerics: Gen[String] =
-    alphaStr suchThat (_.size > 0)
+    alphaStr suchThat (_.nonEmpty)
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]
