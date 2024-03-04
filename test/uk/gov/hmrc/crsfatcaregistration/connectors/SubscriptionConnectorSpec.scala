@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.crsfatcaregistration.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, request, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, request, urlEqualTo}
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalacheck.Arbitrary.arbitrary
@@ -24,9 +24,9 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status.OK
-import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest}
 import uk.gov.hmrc.crsfatcaregistration.base.{SpecBase, WireMockServerHandler}
 import uk.gov.hmrc.crsfatcaregistration.generators.Generators
+import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, ReadSubscriptionRequestDetail}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -80,26 +80,25 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
     "read subscription" - {
       "must return status as OK for read Subscription" in {
-        stubResponse(
-          RequestMethod.GET,
-          "/dac6/dct70d/v1",
-          OK
-        )
-
-        forAll(arbitrary[DisplaySubscriptionRequest]) {
+        forAll(arbitrary[ReadSubscriptionRequestDetail]) {
           sub =>
+            stubResponse(
+              RequestMethod.GET,
+              s"/dac6/dct70d/v1/${sub.idType}/${sub.idNumber}",
+              OK
+            )
+
             val result = connector.readSubscriptionInformation(sub)
             result.futureValue.status mustBe OK
         }
       }
 
       "must return an error status for  invalid read Subscription" in {
-
-        forAll(arbitrary[DisplaySubscriptionRequest], errorCodes) {
+        forAll(arbitrary[ReadSubscriptionRequestDetail], errorCodes) {
           (sub, errorCode) =>
             stubResponse(
               RequestMethod.GET,
-              "/dac6/dct70d/v1",
+              s"/dac6/dct70d/v1/${sub.idType}/${sub.idNumber}",
               errorCode
             )
 

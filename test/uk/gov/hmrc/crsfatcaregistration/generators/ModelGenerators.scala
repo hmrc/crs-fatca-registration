@@ -21,6 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.crsfatcaregistration.models._
 import uk.gov.hmrc.domain.Nino
+import wolfendale.scalacheck.regexp.RegexpGen
 
 trait ModelGenerators {
   self: Generators =>
@@ -282,8 +283,8 @@ trait ModelGenerators {
 
   implicit val arbitraryReadSubscriptionRequestDetail: Arbitrary[ReadSubscriptionRequestDetail] = Arbitrary {
     for {
-      idType   <- arbitrary[String]
-      idNumber <- arbitrary[String]
+      idType   <- RegexpGen.from("[A-Z]{1,6}")
+      idNumber <- RegexpGen.from("[A-Z0-9]{1,15}")
     } yield ReadSubscriptionRequestDetail(
       idType = idType,
       idNumber = idNumber
