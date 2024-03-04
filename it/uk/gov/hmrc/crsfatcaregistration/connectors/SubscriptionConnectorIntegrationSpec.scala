@@ -25,7 +25,7 @@ import play.api.http.Status.OK
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.crsfatcaregistration.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.generators.{Generators, ModelGenerators}
-import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, ReadSubscriptionRequestDetail, UpdateSubscriptionRequest}
+import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, UpdateSubscriptionRequest}
 import uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -99,7 +99,7 @@ class SubscriptionConnectorIntegrationSpec
     "read subscription" - {
       "must return status as OK for read Subscription" in {
 
-        forAll(arbitrary[ReadSubscriptionRequestDetail]) {
+        forAll(arbitrary[DisplaySubscriptionRequest]) {
           sub =>
             stubResponse(s"/dac6/dct70d/v1/${sub.idType}/${sub.idNumber}", OK, RequestMethod.GET)
             val result = connector.readSubscriptionInformation(sub)
@@ -109,7 +109,7 @@ class SubscriptionConnectorIntegrationSpec
 
       "must return an error status for  invalid read Subscription" in {
 
-        forAll(arbitrary[ReadSubscriptionRequestDetail], errorCodes) {
+        forAll(arbitrary[DisplaySubscriptionRequest], errorCodes) {
           (sub, errorCode) =>
             stubResponse(s"/dac6/dct70d/v1/${sub.idType}/${sub.idNumber}", errorCode, RequestMethod.GET)
 

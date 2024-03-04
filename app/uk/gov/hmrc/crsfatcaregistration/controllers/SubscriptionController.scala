@@ -23,7 +23,7 @@ import play.api.mvc.{Action, ControllerComponents, Result}
 import uk.gov.hmrc.crsfatcaregistration.auth.AuthAction
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
-import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, ErrorDetails, ReadSubscriptionRequestDetail, UpdateSubscriptionRequest}
+import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, ErrorDetails, UpdateSubscriptionRequest}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -59,8 +59,8 @@ class SubscriptionController @Inject() (
 
   def readSubscription: Action[JsValue] = authenticate(parse.json).async {
     implicit request =>
-      val subscriptionReadResult: JsResult[ReadSubscriptionRequestDetail] =
-        request.body.validate[ReadSubscriptionRequestDetail]
+      val subscriptionReadResult: JsResult[DisplaySubscriptionRequest] =
+        request.body.validate[DisplaySubscriptionRequest]
 
       subscriptionReadResult.fold(
         invalid = _ =>

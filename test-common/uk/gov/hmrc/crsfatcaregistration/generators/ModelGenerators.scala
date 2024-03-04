@@ -252,6 +252,27 @@ trait ModelGenerators {
     )
   }
 
+  implicit val arbitraryCreateSubscriptionRequest: Arbitrary[CreateSubscriptionRequest] =
+    Arbitrary {
+      for {
+        idType         <- arbitrary[String]
+        idNumber       <- arbitrary[String]
+        tradingName    <- Gen.option(arbitrary[String])
+        gbUser         <- arbitrary[Boolean]
+        primaryContact <- arbitrary[PrimaryContact]
+      } yield CreateSubscriptionRequest(idType, idNumber, tradingName, gbUser, primaryContact, None)
+    }
+
+  implicit val arbitraryDisplaySubscriptionRequestDetail: Arbitrary[DisplaySubscriptionRequest] = Arbitrary {
+    for {
+      idType   <- RegexpGen.from("[A-Z]{1,6}")
+      idNumber <- RegexpGen.from("[A-Z0-9]{1,15}")
+    } yield DisplaySubscriptionRequest(
+      idType = idType,
+      idNumber = idNumber
+    )
+  }
+
   implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
     for {
       contactInformation <- Gen.oneOf(
@@ -269,36 +290,6 @@ trait ModelGenerators {
           arbitrary[ContactInformationForIndividual]
         )
       } yield SecondaryContact(contactInformation)
-    }
-
-  implicit val arbitraryCreateSubscriptionRequest: Arbitrary[CreateSubscriptionRequest] =
-    Arbitrary {
-      for {
-        idType         <- arbitrary[String]
-        idNumber       <- arbitrary[String]
-        tradingName    <- Gen.option(arbitrary[String])
-        gbUser         <- arbitrary[Boolean]
-        primaryContact <- arbitrary[PrimaryContact]
-      } yield CreateSubscriptionRequest(idType, idNumber, tradingName, gbUser, primaryContact, None)
-    }
-
-  implicit val arbitraryReadSubscriptionRequestDetail: Arbitrary[ReadSubscriptionRequestDetail] = Arbitrary {
-    for {
-      idType   <- RegexpGen.from("[A-Z]{1,6}")
-      idNumber <- RegexpGen.from("[A-Z0-9]{1,15}")
-    } yield ReadSubscriptionRequestDetail(
-      idType = idType,
-      idNumber = idNumber
-    )
-  }
-
-  implicit val arbitraryReadSubscriptionRequest: Arbitrary[DisplaySubscriptionRequest] =
-    Arbitrary {
-      for {
-        requestDetail <- arbitrary[ReadSubscriptionRequestDetail]
-      } yield DisplaySubscriptionRequest(
-        DisplaySubscriptionDetails(requestDetail)
-      )
     }
 
   implicit val arbitraryUpdateSubscriptionRequest: Arbitrary[UpdateSubscriptionRequest] =
