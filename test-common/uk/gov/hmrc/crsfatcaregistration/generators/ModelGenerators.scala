@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.crsfatcaregistration.generators
 
-import java.time.LocalDate
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.crsfatcaregistration.models._
 import uk.gov.hmrc.domain.Nino
 import wolfendale.scalacheck.regexp.RegexpGen
+
+import java.time.LocalDate
 
 trait ModelGenerators {
   self: Generators =>
@@ -298,6 +299,18 @@ trait ModelGenerators {
       } yield DisplaySubscriptionRequest(
         DisplaySubscriptionDetails(requestDetail)
       )
+    }
+
+  implicit val arbitraryUpdateSubscriptionRequest: Arbitrary[UpdateSubscriptionRequest] =
+    Arbitrary {
+      for {
+        idType           <- arbitrary[String]
+        idNumber         <- arbitrary[String]
+        gbUser           <- arbitrary[Boolean]
+        tradingName      <- Gen.option(arbitrary[String])
+        primaryContact   <- arbitrary[PrimaryContact]
+        secondaryContact <- Gen.option(arbitrary[SecondaryContact])
+      } yield UpdateSubscriptionRequest(idType, idNumber, gbUser, primaryContact, tradingName, secondaryContact)
     }
 
 }

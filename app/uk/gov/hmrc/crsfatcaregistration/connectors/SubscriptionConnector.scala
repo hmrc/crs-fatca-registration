@@ -18,7 +18,7 @@ package uk.gov.hmrc.crsfatcaregistration.connectors
 
 import com.google.inject.Inject
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
-import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, ReadSubscriptionRequestDetail}
+import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, ReadSubscriptionRequestDetail, UpdateSubscriptionRequest}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,6 +52,22 @@ class SubscriptionConnector @Inject() (
       s"${config.baseUrl(serviceName)}/${params.idType}/${params.idNumber}",
       headers = extraHeaders(config, serviceName)
     )(
+      rds = httpReads,
+      hc = hc,
+      ec = ec
+    )
+  }
+
+  def updateSubscriptionInformation(
+    updateSubscriptionRequest: UpdateSubscriptionRequest
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    val serviceName = "update-subscription"
+    http.PUT[UpdateSubscriptionRequest, HttpResponse](
+      config.baseUrl(serviceName),
+      updateSubscriptionRequest,
+      headers = extraHeaders(config, serviceName)
+    )(
+      wts = UpdateSubscriptionRequest.format,
       rds = httpReads,
       hc = hc,
       ec = ec

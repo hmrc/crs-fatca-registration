@@ -17,7 +17,7 @@
 package uk.gov.hmrc.crsfatcaregistration.controllers
 
 import org.joda.time.DateTime
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -26,16 +26,27 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.crsfatcaregistration.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.auth.{AuthAction, FakeAuthAction}
-import uk.gov.hmrc.crsfatcaregistration.base.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
 import uk.gov.hmrc.crsfatcaregistration.generators.Generators
 import uk.gov.hmrc.crsfatcaregistration.models._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+
+  private val connectorErrorCodes = Table(
+    ("connectorErrorCodes", "expectedErrorCode"),
+    (NOT_FOUND, NOT_FOUND),
+    (BAD_REQUEST, BAD_REQUEST),
+    (FORBIDDEN, FORBIDDEN),
+    (UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR),
+    (BAD_GATEWAY, INTERNAL_SERVER_ERROR),
+    (SERVICE_UNAVAILABLE, SERVICE_UNAVAILABLE),
+    (CONFLICT, CONFLICT)
+  )
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
@@ -510,6 +521,46 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
 
           val result = route(application, request).value
           status(result) mustEqual SERVICE_UNAVAILABLE
+      }
+    }
+
+    "PUT - updateSubscription" - {
+      "must respond with OK when connector returns 200" in {
+        forAll(arbitrary[UpdateSubscriptionRequest]) {
+          updateSubscriptionRequest =>
+            when(mockSubscriptionConnector.updateSubscriptionInformation(mockitoEq(updateSubscriptionRequest))(any[HeaderCarrier](), any[ExecutionContext]()))
+              .thenReturn(Future.successful(HttpResponse(OK, "Some Response", Map.empty)))
+
+            val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription.url)
+              .withJsonBody(Json.toJson(updateSubscriptionRequest))
+
+            val result = route(application, request).value
+            status(result) mustEqual OK
+        }
+      }
+
+      "must respond with BAD_REQUEST when given an invalid request" in {
+        val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription.url).withJsonBody(Json.parse("{}"))
+
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
+
+      forAll(connectorErrorCodes) {
+        (connectorErrorCode, expectedErrorCode) =>
+          s"must respond with [$expectedErrorCode] when connector returns [$connectorErrorCode]" in {
+            forAll(arbitrary[UpdateSubscriptionRequest]) {
+              updateSubscriptionRequest =>
+                when(mockSubscriptionConnector.updateSubscriptionInformation(any[UpdateSubscriptionRequest]())(any[HeaderCarrier](), any[ExecutionContext]()))
+                  .thenReturn(Future.successful(HttpResponse(connectorErrorCode, "Some Error", Map.empty)))
+
+                val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription.url)
+                  .withJsonBody(Json.toJson(updateSubscriptionRequest))
+
+                val result = route(application, request).value
+                status(result) mustEqual expectedErrorCode
+            }
+          }
       }
     }
 
