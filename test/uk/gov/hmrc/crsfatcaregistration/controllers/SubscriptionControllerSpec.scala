@@ -93,7 +93,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "should return OK when ReadSubscriptionRequest is valid" in {
       when(
         mockSubscriptionConnector
-          .readSubscriptionInformation(any[ReadSubscriptionRequestDetail]())(
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -103,7 +103,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
         )
       )
 
-      forAll(arbitrary[ReadSubscriptionRequestDetail]) {
+      forAll(arbitrary[DisplaySubscriptionRequest]) {
         readSubscriptionRequest =>
           val request =
             FakeRequest(
@@ -145,7 +145,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "should return BAD_REQUEST when DisplaySubscriptionRequest is invalid" in {
       when(
         mockSubscriptionConnector
-          .readSubscriptionInformation(any[ReadSubscriptionRequestDetail]())(
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -226,7 +226,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "should return FORBIDDEN when authorisation is invalid for read Subscription" in {
       when(
         mockSubscriptionConnector
-          .readSubscriptionInformation(any[ReadSubscriptionRequestDetail]())(
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -237,7 +237,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
           )
         )
 
-      forAll(arbitrary[ReadSubscriptionRequestDetail]) {
+      forAll(arbitrary[DisplaySubscriptionRequest]) {
         readSubscriptionRequest =>
           val request =
             FakeRequest(
@@ -254,7 +254,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "should return SERVICE_UNAVAILABLE when EIS becomes unavailable for read Subscription" in {
       when(
         mockSubscriptionConnector
-          .readSubscriptionInformation(any[ReadSubscriptionRequestDetail]())(
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -265,7 +265,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
           )
         )
 
-      forAll(arbitrary[ReadSubscriptionRequestDetail]) {
+      forAll(arbitrary[DisplaySubscriptionRequest]) {
         readSubscriptionRequest =>
           val request =
             FakeRequest(
@@ -341,7 +341,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "should return INTERNAL_SERVER_ERROR when EIS fails for readSubscription" in {
       when(
         mockSubscriptionConnector
-          .readSubscriptionInformation(any[ReadSubscriptionRequestDetail]())(
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -356,7 +356,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
           )
         )
 
-      forAll(arbitrary[ReadSubscriptionRequestDetail]) {
+      forAll(arbitrary[DisplaySubscriptionRequest]) {
         readSubscriptionRequest =>
           val request =
             FakeRequest(
@@ -443,7 +443,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "should return NOT_FOUND for unspecified errors for read Subscription" in {
       when(
         mockSubscriptionConnector
-          .readSubscriptionInformation(any[ReadSubscriptionRequestDetail]())(
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -454,7 +454,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
           )
         )
 
-      forAll(arbitrary[ReadSubscriptionRequestDetail]) {
+      forAll(arbitrary[DisplaySubscriptionRequest]) {
         readSubscriptionRequest =>
           val request =
             FakeRequest(
@@ -499,7 +499,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "downstream errors should be recoverable when not in json for read subscription" in {
       when(
         mockSubscriptionConnector
-          .readSubscriptionInformation(any[ReadSubscriptionRequestDetail]())(
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -510,7 +510,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
           )
         )
 
-      forAll(arbitrary[ReadSubscriptionRequestDetail]) {
+      forAll(arbitrary[DisplaySubscriptionRequest]) {
         readSubscriptionRequest =>
           val request =
             FakeRequest(

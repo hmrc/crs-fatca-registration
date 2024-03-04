@@ -188,15 +188,6 @@ object SecondaryContact {
 
 }
 
-case class RequestParameters(paramName: String, paramValue: String)
-
-object RequestParameters {
-
-  implicit val indentifierFormats: OFormat[RequestParameters] =
-    Json.format[RequestParameters]
-
-}
-
 case class CreateSubscriptionRequest(
   idType: String,
   idNumber: String,
@@ -210,44 +201,5 @@ object CreateSubscriptionRequest {
 
   implicit val format: OFormat[CreateSubscriptionRequest] =
     Json.format[CreateSubscriptionRequest]
-
-}
-
-case class ReturnParameters(paramName: String, paramValue: String)
-
-object ReturnParameters {
-  implicit val format: Format[ReturnParameters] = Json.format[ReturnParameters]
-}
-
-case class SubscriptionResponse(
-  subscriptionID: String,
-  processingDate: String
-)
-
-object SubscriptionResponse {
-
-  implicit val reads: Reads[SubscriptionResponse] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \\ "subscriptionID").read[String] and
-        (__ \\ "processingDate").read[String]
-    )(
-      (subscriptionID, processingDate) => SubscriptionResponse(subscriptionID, processingDate)
-    )
-  }
-
-  implicit val writes: OWrites[SubscriptionResponse] =
-    Json.writes[SubscriptionResponse]
-
-}
-
-case class CreateSubscriptionResponse(
-  createSubscriptionResponse: SubscriptionResponse
-)
-
-object CreateSubscriptionResponse {
-
-  implicit val format: OFormat[CreateSubscriptionResponse] =
-    Json.format[CreateSubscriptionResponse]
 
 }
