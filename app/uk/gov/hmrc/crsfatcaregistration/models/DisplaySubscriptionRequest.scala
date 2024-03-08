@@ -18,30 +18,7 @@ package uk.gov.hmrc.crsfatcaregistration.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ReadSubscriptionRequestDetail(IDType: String, IDNumber: String)
-
-object ReadSubscriptionRequestDetail {
-
-  implicit val format: OFormat[ReadSubscriptionRequestDetail] =
-    Json.format[ReadSubscriptionRequestDetail]
-
-}
-
-case class DisplaySubscriptionDetails(
-  requestCommon: RequestCommonForSubscription,
-  requestDetail: ReadSubscriptionRequestDetail
-)
-
-object DisplaySubscriptionDetails {
-
-  implicit val format: OFormat[DisplaySubscriptionDetails] =
-    Json.format[DisplaySubscriptionDetails]
-
-}
-
-case class DisplaySubscriptionRequest(
-  displaySubscriptionRequest: DisplaySubscriptionDetails
-)
+case class DisplaySubscriptionRequest(idType: String, idNumber: String)
 
 object DisplaySubscriptionRequest {
 

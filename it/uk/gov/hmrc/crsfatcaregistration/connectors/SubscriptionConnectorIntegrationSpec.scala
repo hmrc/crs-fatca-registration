@@ -21,8 +21,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.concurrent.IntegrationPatience
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.{Application, Configuration}
 import play.api.http.Status.OK
+import play.api.{Application, Configuration}
 import uk.gov.hmrc.crsfatcaregistration.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.generators.{Generators, ModelGenerators}
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, UpdateSubscriptionRequest}
@@ -98,10 +98,10 @@ class SubscriptionConnectorIntegrationSpec
 
     "read subscription" - {
       "must return status as OK for read Subscription" in {
-        stubResponse("/dac6/dct70d/v1", OK)
 
         forAll(arbitrary[DisplaySubscriptionRequest]) {
           sub =>
+            stubResponse(s"/dac6/dct70d/v1/${sub.idType}/${sub.idNumber}", OK, RequestMethod.GET)
             val result = connector.readSubscriptionInformation(sub)
             result.futureValue.status mustBe OK
         }
@@ -111,7 +111,7 @@ class SubscriptionConnectorIntegrationSpec
 
         forAll(arbitrary[DisplaySubscriptionRequest], errorCodes) {
           (sub, errorCode) =>
-            stubResponse("/dac6/dct70d/v1", errorCode)
+            stubResponse(s"/dac6/dct70d/v1/${sub.idType}/${sub.idNumber}", errorCode, RequestMethod.GET)
 
             val result = connector.readSubscriptionInformation(sub)
             result.futureValue.status mustBe errorCode

@@ -1,8 +1,6 @@
 
 # crs-fatca-registration
 
-This is a placeholder README.md for a new repository
-
 ### Running the service
 
 Service manager: CRS_FATCA_ALL

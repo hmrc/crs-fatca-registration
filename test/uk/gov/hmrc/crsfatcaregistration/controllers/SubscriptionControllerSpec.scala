@@ -142,7 +142,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
       status(result) mustEqual BAD_REQUEST
     }
 
-    "should return BAD_REQUEST when DisplaySubscriptionRequest ia invalid" in {
+    "should return BAD_REQUEST when DisplaySubscriptionRequest is invalid" in {
       when(
         mockSubscriptionConnector
           .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(

@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 sealed trait ContactInformation
 
-case class OrganisationDetails(organisationName: String)
+case class OrganisationDetails(name: String)
 
 object OrganisationDetails {
 
@@ -188,125 +188,18 @@ object SecondaryContact {
 
 }
 
-case class RequestDetail(
-  IDType: String,
-  IDNumber: String,
+case class CreateSubscriptionRequest(
+  idType: String,
+  idNumber: String,
   tradingName: Option[String],
-  isGBUser: Boolean,
+  gbUser: Boolean,
   primaryContact: PrimaryContact,
   secondaryContact: Option[SecondaryContact]
-)
-
-object RequestDetail {
-
-  implicit val requestDetailFormats: OFormat[RequestDetail] =
-    Json.format[RequestDetail]
-
-}
-
-case class RequestParameters(paramName: String, paramValue: String)
-
-object RequestParameters {
-
-  implicit val indentifierFormats: OFormat[RequestParameters] =
-    Json.format[RequestParameters]
-
-}
-
-case class RequestCommonForSubscription(
-  regime: String,
-  conversationID: Option[String] = None,
-  receiptDate: String,
-  acknowledgementReference: String,
-  originatingSystem: String,
-  requestParameters: Option[Seq[RequestParameters]]
-)
-
-object RequestCommonForSubscription {
-
-  implicit val requestCommonForSubscriptionFormats: OFormat[RequestCommonForSubscription] =
-    Json.format[RequestCommonForSubscription]
-
-}
-
-case class SubscriptionRequest(
-  requestCommon: RequestCommonForSubscription,
-  requestDetail: RequestDetail
-)
-
-object SubscriptionRequest {
-
-  implicit val format: OFormat[SubscriptionRequest] =
-    Json.format[SubscriptionRequest]
-
-}
-
-case class CreateSubscriptionRequest(
-  createSubscriptionRequest: SubscriptionRequest
 )
 
 object CreateSubscriptionRequest {
 
   implicit val format: OFormat[CreateSubscriptionRequest] =
     Json.format[CreateSubscriptionRequest]
-
-}
-
-case class ReturnParameters(paramName: String, paramValue: String)
-
-object ReturnParameters {
-  implicit val format: Format[ReturnParameters] = Json.format[ReturnParameters]
-}
-
-case class ResponseCommon(
-  status: String,
-  statusText: Option[String],
-  processingDate: String,
-  returnParameters: Option[Seq[ReturnParameters]]
-)
-
-object ResponseCommon {
-  implicit val format: Format[ResponseCommon] = Json.format[ResponseCommon]
-}
-
-case class ResponseDetailSubscription(subscriptionID: String)
-
-object ResponseDetailSubscription {
-
-  implicit val format: OFormat[ResponseDetailSubscription] =
-    Json.format[ResponseDetailSubscription]
-
-}
-
-case class SubscriptionResponse(
-  responseCommon: ResponseCommon,
-  responseDetail: ResponseDetailSubscription
-)
-
-object SubscriptionResponse {
-
-  implicit val reads: Reads[SubscriptionResponse] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "responseCommon").read[ResponseCommon] and
-        (__ \ "responseDetail").read[ResponseDetailSubscription]
-    )(
-      (responseCommon, responseDetail) => SubscriptionResponse(responseCommon, responseDetail)
-    )
-  }
-
-  implicit val writes: OWrites[SubscriptionResponse] =
-    Json.writes[SubscriptionResponse]
-
-}
-
-case class CreateSubscriptionResponse(
-  createSubscriptionResponse: SubscriptionResponse
-)
-
-object CreateSubscriptionResponse {
-
-  implicit val format: OFormat[CreateSubscriptionResponse] =
-    Json.format[CreateSubscriptionResponse]
 
 }

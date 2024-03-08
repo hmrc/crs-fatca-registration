@@ -20,6 +20,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.crsfatcaregistration.models._
 import uk.gov.hmrc.domain.Nino
+import wolfendale.scalacheck.regexp.RegexpGen
 
 import java.time.LocalDate
 
@@ -203,21 +204,6 @@ trait ModelGenerators {
       } yield WithIDOrganisation(organisationName, organisationType)
     }
 
-  implicit val arbitraryRequestCommonForSubscription: Arbitrary[RequestCommonForSubscription] =
-    Arbitrary {
-      for {
-        receiptDate        <- arbitrary[String]
-        acknowledgementRef <- stringsWithMaxLength(stringMaxLen)
-      } yield RequestCommonForSubscription(
-        regime = "CRSFATCA",
-        conversationID = None,
-        receiptDate = receiptDate,
-        acknowledgementReference = acknowledgementRef,
-        originatingSystem = "MDTP",
-        None
-      )
-    }
-
   implicit val arbitraryIndividualDetails: Arbitrary[IndividualDetails] =
     Arbitrary {
       for {
@@ -235,7 +221,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         name <- arbitrary[String]
-      } yield OrganisationDetails(organisationName = name)
+      } yield OrganisationDetails(name = name)
     }
 
   implicit val arbitraryContactInformationForIndividual: Arbitrary[ContactInformationForIndividual] = Arbitrary {
@@ -266,53 +252,26 @@ trait ModelGenerators {
     )
   }
 
-  implicit val arbitraryRequestDetail: Arbitrary[RequestDetail] = Arbitrary {
-    for {
-      idType           <- arbitrary[String]
-      idNumber         <- arbitrary[String]
-      tradingName      <- Gen.option(arbitrary[String])
-      isGBUser         <- arbitrary[Boolean]
-      primaryContact   <- arbitrary[PrimaryContact]
-      secondaryContact <- Gen.option(arbitrary[SecondaryContact])
-    } yield RequestDetail(
-      IDType = idType,
-      IDNumber = idNumber,
-      tradingName = tradingName,
-      isGBUser = isGBUser,
-      primaryContact = primaryContact,
-      secondaryContact = secondaryContact
-    )
-  }
-
   implicit val arbitraryCreateSubscriptionRequest: Arbitrary[CreateSubscriptionRequest] =
     Arbitrary {
       for {
-        requestCommon <- arbitrary[RequestCommonForSubscription]
-        requestDetail <- arbitrary[RequestDetail]
-      } yield CreateSubscriptionRequest(
-        SubscriptionRequest(requestCommon, requestDetail)
-      )
+        idType         <- arbitrary[String]
+        idNumber       <- arbitrary[String]
+        tradingName    <- Gen.option(arbitrary[String])
+        gbUser         <- arbitrary[Boolean]
+        primaryContact <- arbitrary[PrimaryContact]
+      } yield CreateSubscriptionRequest(idType, idNumber, tradingName, gbUser, primaryContact, None)
     }
 
-  implicit val arbitraryReadSubscriptionRequestDetail: Arbitrary[ReadSubscriptionRequestDetail] = Arbitrary {
+  implicit val arbitraryDisplaySubscriptionRequestDetail: Arbitrary[DisplaySubscriptionRequest] = Arbitrary {
     for {
-      idType   <- arbitrary[String]
-      idNumber <- arbitrary[String]
-    } yield ReadSubscriptionRequestDetail(
-      IDType = idType,
-      IDNumber = idNumber
+      idType   <- RegexpGen.from("[A-Z]{1,6}")
+      idNumber <- RegexpGen.from("[A-Z0-9]{1,15}")
+    } yield DisplaySubscriptionRequest(
+      idType = idType,
+      idNumber = idNumber
     )
   }
-
-  implicit val arbitraryReadSubscriptionRequest: Arbitrary[DisplaySubscriptionRequest] =
-    Arbitrary {
-      for {
-        requestCommon <- arbitrary[RequestCommonForSubscription]
-        requestDetail <- arbitrary[ReadSubscriptionRequestDetail]
-      } yield DisplaySubscriptionRequest(
-        DisplaySubscriptionDetails(requestCommon, requestDetail)
-      )
-    }
 
   implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
     for {
