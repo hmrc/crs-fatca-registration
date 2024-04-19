@@ -16,20 +16,12 @@
 
 package uk.gov.hmrc.crsfatcaregistration.auth
 
-import com.google.inject.Inject
-import play.api.mvc.{BodyParsers, Request, Result}
+import javax.inject.Inject
 
-import scala.concurrent.{ExecutionContext, Future}
+class AuthActionSets @Inject() (adminOnlyAuthAction: AdminOnlyAuthAction, allowAllAuthAction: AllowAllAuthAction) {
 
-class FakeSubscriptionAuthAction @Inject() (
-  val parser: BodyParsers.Default
-)(implicit val executionContext: ExecutionContext)
-    extends SubscriptionAuthAction {
+  def authenticateAdmin: AdminOnlyAuthAction = adminOnlyAuthAction
 
-  override def invokeBlock[A](
-    request: Request[A],
-    block: Request[A] => Future[Result]
-  ): Future[Result] =
-    block(request)
+  def authenticateAll: AllowAllAuthAction = allowAllAuthAction
 
 }

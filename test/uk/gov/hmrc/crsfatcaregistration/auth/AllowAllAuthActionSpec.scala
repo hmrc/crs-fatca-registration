@@ -37,9 +37,9 @@ import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-class SubscriptionAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar {
+class AllowAllAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar {
 
-  class Harness(authAction: SubscriptionAuthAction) extends InjectedController {
+  class Harness(authAction: AllowAllAuthAction) extends InjectedController {
 
     def onPageLoad(): Action[AnyContent] = authAction {
       _ => Ok
@@ -56,7 +56,7 @@ class SubscriptionAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with 
     .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
     .build()
 
-  "Subscription Auth Action" when {
+  "Allow All Auth Action" when {
     "the user is not logged in" must {
       "must return UNAUTHORIZED" in {
 
@@ -67,7 +67,7 @@ class SubscriptionAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with 
           )
         ).thenReturn(Future.failed(new MissingBearerToken))
 
-        val authAction = application.injector.instanceOf[SubscriptionAuthAction]
+        val authAction = application.injector.instanceOf[AllowAllAuthAction]
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -86,7 +86,7 @@ class SubscriptionAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with 
             )(any[HeaderCarrier](), any[ExecutionContext]())
         ) thenReturn Future.successful(())
 
-        val authAction = application.injector.instanceOf[SubscriptionAuthAction]
+        val authAction = application.injector.instanceOf[AllowAllAuthAction]
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))

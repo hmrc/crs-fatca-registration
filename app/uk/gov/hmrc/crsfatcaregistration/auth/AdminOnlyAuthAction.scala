@@ -30,11 +30,11 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject() (
+class AdminOnlyAuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends AuthAction
+    extends AdminOnlyAuthAction
     with AuthorisedFunctions {
 
   override def invokeBlock[A](
@@ -73,5 +73,5 @@ class AuthActionImpl @Inject() (
 
 }
 
-@ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction extends ActionBuilder[Request, AnyContent] with ActionFunction[Request, Request]
+@ImplementedBy(classOf[AdminOnlyAuthActionImpl])
+trait AdminOnlyAuthAction extends ActionBuilder[Request, AnyContent] with ActionFunction[Request, Request]

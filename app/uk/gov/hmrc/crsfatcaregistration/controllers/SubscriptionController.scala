@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents, Result}
-import uk.gov.hmrc.crsfatcaregistration.auth.SubscriptionAuthAction
+import uk.gov.hmrc.crsfatcaregistration.auth.AuthActionSets
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, ErrorDetails, UpdateSubscriptionRequest}
@@ -32,7 +32,7 @@ import scala.util.{Success, Try}
 
 class SubscriptionController @Inject() (
   val config: AppConfig,
-  authenticate: SubscriptionAuthAction,
+  authenticator: AuthActionSets,
   subscriptionConnector: SubscriptionConnector,
   override val controllerComponents: ControllerComponents
 )(implicit executionContext: ExecutionContext)
@@ -40,7 +40,7 @@ class SubscriptionController @Inject() (
 
   private val logger: Logger = Logger(this.getClass)
 
-  def createSubscription: Action[JsValue] = authenticate(parse.json).async {
+  def createSubscription: Action[JsValue] = authenticator.authenticateAdmin(parse.json).async {
     implicit request =>
       val subscriptionSubmissionResult: JsResult[CreateSubscriptionRequest] =
         request.body.validate[CreateSubscriptionRequest]
@@ -57,7 +57,7 @@ class SubscriptionController @Inject() (
       )
   }
 
-  def readSubscription: Action[JsValue] = authenticate(parse.json).async {
+  def readSubscription: Action[JsValue] = authenticator.authenticateAll(parse.json).async {
     implicit request =>
       val subscriptionReadResult: JsResult[DisplaySubscriptionRequest] =
         request.body.validate[DisplaySubscriptionRequest]
@@ -74,7 +74,7 @@ class SubscriptionController @Inject() (
       )
   }
 
-  def updateSubscription(): Action[JsValue] = authenticate(parse.json).async {
+  def updateSubscription(): Action[JsValue] = authenticator.authenticateAll(parse.json).async {
     implicit request =>
       request.body
         .validate[UpdateSubscriptionRequest]

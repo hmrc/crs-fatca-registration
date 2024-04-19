@@ -16,38 +16,20 @@
 
 package uk.gov.hmrc.crsfatcaregistration.auth
 
-import com.google.inject.{ImplementedBy, Inject}
-import play.api.http.Status.UNAUTHORIZED
-import play.api.mvc.Results.Status
-import play.api.mvc._
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, NoActiveSession}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import com.google.inject.Inject
+import play.api.mvc.{BodyParsers, Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionAuthActionImpl @Inject() (
-  override val authConnector: AuthConnector,
+class FakeAllowAllAuthAction @Inject() (
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends SubscriptionAuthAction
-    with AuthorisedFunctions {
+    extends AllowAllAuthAction {
 
   override def invokeBlock[A](
     request: Request[A],
     block: Request[A] => Future[Result]
-  ): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-
-    authorised() {
-      block(request)
-    } recover {
-      case _: NoActiveSession =>
-        Status(UNAUTHORIZED)
-    }
-  }
+  ): Future[Result] =
+    block(request)
 
 }
-
-@ImplementedBy(classOf[SubscriptionAuthActionImpl])
-trait SubscriptionAuthAction extends ActionBuilder[Request, AnyContent] with ActionFunction[Request, Request]
