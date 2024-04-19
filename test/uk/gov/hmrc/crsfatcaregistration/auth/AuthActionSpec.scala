@@ -86,7 +86,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
     }
 
     "the user is logged in as Agent" must {
-      "must return the request" in {
+      "must return UNAUTHORIZED request" in {
         val retrieval: AuthRetrievals = Some(Agent) ~ Some(User)
         when(
           mockAuthConnector
@@ -100,7 +100,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
-        status(result) mustBe OK
+        status(result) mustBe UNAUTHORIZED
       }
     }
 

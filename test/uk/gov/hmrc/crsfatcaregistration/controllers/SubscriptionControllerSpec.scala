@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.crsfatcaregistration.SpecBase
-import uk.gov.hmrc.crsfatcaregistration.auth.{AuthAction, FakeAuthAction}
+import uk.gov.hmrc.crsfatcaregistration.auth.{FakeSubscriptionAuthAction, SubscriptionAuthAction}
 import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
 import uk.gov.hmrc.crsfatcaregistration.generators.Generators
 import uk.gov.hmrc.crsfatcaregistration.models._
@@ -57,7 +57,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     .overrides(
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
       bind[AuthConnector].toInstance(mockAuthConnector),
-      bind[AuthAction].to[FakeAuthAction]
+      bind[SubscriptionAuthAction].to[FakeSubscriptionAuthAction]
     )
     .build()
 

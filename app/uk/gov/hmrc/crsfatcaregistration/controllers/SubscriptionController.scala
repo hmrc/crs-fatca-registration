@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents, Result}
-import uk.gov.hmrc.crsfatcaregistration.auth.AuthAction
+import uk.gov.hmrc.crsfatcaregistration.auth.SubscriptionAuthAction
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, ErrorDetails, UpdateSubscriptionRequest}
@@ -32,7 +32,7 @@ import scala.util.{Success, Try}
 
 class SubscriptionController @Inject() (
   val config: AppConfig,
-  authenticate: AuthAction,
+  authenticate: SubscriptionAuthAction,
   subscriptionConnector: SubscriptionConnector,
   override val controllerComponents: ControllerComponents
 )(implicit executionContext: ExecutionContext)

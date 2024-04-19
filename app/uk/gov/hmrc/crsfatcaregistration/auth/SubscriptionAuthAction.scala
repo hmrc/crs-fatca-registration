@@ -20,21 +20,17 @@ import com.google.inject.{ImplementedBy, Inject}
 import play.api.http.Status.UNAUTHORIZED
 import play.api.mvc.Results.Status
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
-import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, credentialRole}
-import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject() (
+class SubscriptionAuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends AuthAction
+    extends SubscriptionAuthAction
     with AuthorisedFunctions {
 
   override def invokeBlock[A](
@@ -43,35 +39,15 @@ class AuthActionImpl @Inject() (
   ): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
-    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(
-        affinityGroup and credentialRole
-      ) {
-        case userAffinityGroup ~ userCredentialRole =>
-          if (isPermittedUserType(userAffinityGroup, userCredentialRole)) {
-            block(request)
-          } else Future.successful(Status(UNAUTHORIZED))
-      }
-      .recover {
-        case _: NoActiveSession        => Status(UNAUTHORIZED)
-        case _: AuthorisationException => Status(UNAUTHORIZED)
-      }
-  }
-
-  def isPermittedUserType(
-    affinityGroup: Option[AffinityGroup],
-    credentialRole: Option[CredentialRole]
-  ): Boolean =
-    affinityGroup match {
-      case Some(Agent) => false
-      case Some(Organisation) =>
-        credentialRole.fold(false)(
-          cr => cr == User
-        )
-      case _ => true
+    authorised() {
+      block(request)
+    } recover {
+      case _: NoActiveSession =>
+        Status(UNAUTHORIZED)
     }
+  }
 
 }
 
-@ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction extends ActionBuilder[Request, AnyContent] with ActionFunction[Request, Request]
+@ImplementedBy(classOf[SubscriptionAuthActionImpl])
+trait SubscriptionAuthAction extends ActionBuilder[Request, AnyContent] with ActionFunction[Request, Request]
