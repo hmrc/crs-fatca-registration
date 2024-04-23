@@ -19,7 +19,6 @@ object AppDependencies {
     "wolfendale"              %% "scalacheck-gen-regexp"      % "0.1.2",
     "org.jsoup"                % "jsoup"                      % "1.17.2",
     "org.scalatest"           %% "scalatest"                  % "3.2.18",
-    "com.github.tomakehurst"   % "wiremock-standalone"        % "3.0.1",
     "org.scalatestplus" %% "scalacheck-1-17" % "3.2.18.0"
   ).map(_ % "test, it")
 
