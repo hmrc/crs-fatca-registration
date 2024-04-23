@@ -260,7 +260,7 @@ class RegistrationControllerSpec extends SpecBase with Generators with ScalaChec
 
             val result = route(application, request).value
 
-            status(result) mustBe BAD_REQUEST
+            status(result) mustEqual BAD_REQUEST
         }
       }
 

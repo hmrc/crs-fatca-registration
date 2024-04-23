@@ -88,7 +88,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
               .withJsonBody(Json.toJson(subscriptionRequest))
 
           val result = route(application, request).value
-          status(result) mustBe OK
+          status(result) mustEqual OK
       }
     }
 
@@ -115,7 +115,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
               .withJsonBody(Json.toJson(readSubscriptionRequest))
 
           val result = route(application, request).value
-          status(result) mustBe OK
+          status(result) mustEqual OK
       }
     }
 
