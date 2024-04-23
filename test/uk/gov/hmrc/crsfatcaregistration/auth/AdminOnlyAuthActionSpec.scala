@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.crsfatcaregistration.auth
 
-import akka.util.Timeout
+import org.apache.pekko.util.Timeout
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec

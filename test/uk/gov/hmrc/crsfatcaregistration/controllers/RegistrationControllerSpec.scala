@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.crsfatcaregistration.controllers
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.any
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import org.scalacheck.Prop.forAll
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -34,6 +34,7 @@ import uk.gov.hmrc.crsfatcaregistration.generators.Generators
 import uk.gov.hmrc.crsfatcaregistration.models._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -258,7 +259,8 @@ class RegistrationControllerSpec extends SpecBase with Generators with ScalaChec
                 .withJsonBody(Json.toJson(withIdSubscription))
 
             val result = route(application, request).value
-            status(result) mustEqual BAD_REQUEST
+
+            status(result) mustBe BAD_REQUEST
         }
       }
 
@@ -319,7 +321,7 @@ class RegistrationControllerSpec extends SpecBase with Generators with ScalaChec
       "should return forbidden error when authorisation is invalid" in {
         val errorDetails = ErrorDetails(
           ErrorDetail(
-            DateTime.now().toString,
+            LocalDate.now().toString,
             Some("xx"),
             "403",
             "FORBIDDEN",
