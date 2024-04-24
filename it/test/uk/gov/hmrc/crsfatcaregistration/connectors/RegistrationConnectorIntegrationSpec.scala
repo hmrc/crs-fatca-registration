@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.crsfatcaregistration.connectors
+package it.test.uk.gov.hmrc.crsfatcaregistration.connectors
 
+import it.test.uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.concurrent.IntegrationPatience
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.{Application, Configuration}
 import play.api.http.Status._
 import uk.gov.hmrc.crsfatcaregistration.SpecBase
+import uk.gov.hmrc.crsfatcaregistration.connectors.RegistrationConnector
 import uk.gov.hmrc.crsfatcaregistration.generators.Generators
 import uk.gov.hmrc.crsfatcaregistration.models.{RegisterWithID, RegisterWithoutId}
-import uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

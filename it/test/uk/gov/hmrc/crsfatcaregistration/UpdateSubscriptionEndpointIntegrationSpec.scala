@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.crsfatcaregistration
+package it.test.uk.gov.hmrc.crsfatcaregistration
 
 import com.github.tomakehurst.wiremock.http.RequestMethod
+import it.test.uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.concurrent.IntegrationPatience
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -30,10 +31,9 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers._
 import play.api.{Application, Configuration}
-import uk.gov.hmrc.crsfatcaregistration.auth.{AllowAllAuthAction, FakeAllowAllAuthAction}
+import uk.gov.hmrc.crsfatcaregistration.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.generators.{Generators, ModelGenerators}
 import uk.gov.hmrc.crsfatcaregistration.models.UpdateSubscriptionRequest
-import uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 
 class UpdateSubscriptionEndpointIntegrationSpec
     extends SpecBase
