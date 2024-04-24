@@ -32,6 +32,7 @@ import play.api.libs.ws.WSClient
 import play.api.test.Helpers._
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.crsfatcaregistration.SpecBase
+import uk.gov.hmrc.crsfatcaregistration.auth.{AllowAllAuthAction, FakeAllowAllAuthAction}
 import uk.gov.hmrc.crsfatcaregistration.generators.{Generators, ModelGenerators}
 import uk.gov.hmrc.crsfatcaregistration.models.UpdateSubscriptionRequest
 
