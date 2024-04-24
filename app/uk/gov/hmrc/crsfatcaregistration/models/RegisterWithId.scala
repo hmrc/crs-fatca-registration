@@ -49,7 +49,7 @@ case class WithIDIndividual(
 ) extends PartnerDetails
 
 object WithIDIndividual {
-  implicit val format = Json.format[WithIDIndividual]
+  implicit val format: OFormat[WithIDIndividual] = Json.format[WithIDIndividual]
 }
 
 case class WithIDOrganisation(
@@ -58,7 +58,7 @@ case class WithIDOrganisation(
 ) extends PartnerDetails
 
 object WithIDOrganisation {
-  implicit val format = Json.format[WithIDOrganisation]
+  implicit val format: OFormat[WithIDOrganisation] = Json.format[WithIDOrganisation]
 }
 
 case class RequestWithIDDetails(

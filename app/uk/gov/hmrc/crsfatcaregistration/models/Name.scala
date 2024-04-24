@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.crsfatcaregistration.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 //strings between 1 and 35 inclusive ^[a-zA-Z &`\\-\\'^]{1,35}$
 case class Name(firstName: String, secondName: String)
 
 object Name {
-  implicit val format = Json.format[Name]
+  implicit val format: OFormat[Name] = Json.format[Name]
 }
