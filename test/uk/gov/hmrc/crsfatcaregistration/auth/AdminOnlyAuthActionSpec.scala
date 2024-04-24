@@ -39,9 +39,9 @@ import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar {
+class AdminOnlyAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar {
 
-  class Harness(authAction: AuthAction) extends InjectedController {
+  class Harness(authAction: AdminOnlyAuthAction) extends InjectedController {
 
     def onPageLoad(): Action[AnyContent] = authAction {
       _ =>
@@ -65,7 +65,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
     )
     .build()
 
-  "Auth Action" when {
+  "Admin Only Auth Action" when {
     "the user is not logged in" must {
       "must return unauthorised" in {
 
@@ -77,7 +77,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
         )
           .thenReturn(Future.failed(new MissingBearerToken))
 
-        val authAction = application.injector.instanceOf[AuthAction]
+        val authAction = application.injector.instanceOf[AdminOnlyAuthAction]
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest("", ""))
         status(result) mustBe UNAUTHORIZED
@@ -85,8 +85,8 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
       }
     }
 
-    "the user is logged in" must {
-      "must return the UNAUTHORIZED request" in {
+    "the user is logged in as Agent" must {
+      "must return UNAUTHORIZED request" in {
         val retrieval: AuthRetrievals = Some(Agent) ~ Some(User)
         when(
           mockAuthConnector
@@ -96,7 +96,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
             )(any[HeaderCarrier](), any[ExecutionContext]())
         ) thenReturn Future.successful(retrieval)
 
-        val authAction = application.injector.instanceOf[AuthAction]
+        val authAction = application.injector.instanceOf[AdminOnlyAuthAction]
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -115,7 +115,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
             )(any[HeaderCarrier](), any[ExecutionContext]())
         ) thenReturn Future.successful(retrieval)
 
-        val authAction = application.injector.instanceOf[AuthAction]
+        val authAction = application.injector.instanceOf[AdminOnlyAuthAction]
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -123,7 +123,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
       }
     }
 
-    "the user is logged in" must {
+    "the user is logged in as Organisation" must {
       "must return the request" in {
         val retrieval: AuthRetrievals = Some(Organisation) ~ Some(User)
         when(
@@ -134,7 +134,7 @@ class AuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with MockitoSugar
             )(any[HeaderCarrier](), any[ExecutionContext]())
         ) thenReturn Future.successful(retrieval)
 
-        val authAction = application.injector.instanceOf[AuthAction]
+        val authAction = application.injector.instanceOf[AdminOnlyAuthAction]
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))

@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers._
 import play.api.{Application, Configuration}
-import uk.gov.hmrc.crsfatcaregistration.auth.{AuthAction, FakeAuthAction}
+import uk.gov.hmrc.crsfatcaregistration.auth.{AllowAllAuthAction, FakeAllowAllAuthAction}
 import uk.gov.hmrc.crsfatcaregistration.generators.{Generators, ModelGenerators}
 import uk.gov.hmrc.crsfatcaregistration.models.UpdateSubscriptionRequest
 import uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
@@ -64,7 +64,7 @@ class UpdateSubscriptionEndpointIntegrationSpec
         "microservice.services.update-subscription.port" -> wireMockServer.port()
       )
     )
-    .overrides(bind[AuthAction].to[FakeAuthAction])
+    .overrides(bind[AllowAllAuthAction].to[FakeAllowAllAuthAction])
     .build()
 
   override lazy val app: Application = fakeApplication()

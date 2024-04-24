@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents, Request, Result}
-import uk.gov.hmrc.crsfatcaregistration.auth.AuthAction
+import uk.gov.hmrc.crsfatcaregistration.auth.AdminOnlyAuthAction
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.connectors.RegistrationConnector
 import uk.gov.hmrc.crsfatcaregistration.models.{ErrorDetails, RegisterWithID, RegisterWithoutId}
@@ -32,7 +32,7 @@ import scala.util.{Success, Try}
 
 class RegistrationController @Inject() (
   val config: AppConfig,
-  authenticate: AuthAction,
+  authenticate: AdminOnlyAuthAction,
   registrationConnector: RegistrationConnector,
   override val controllerComponents: ControllerComponents
 )(implicit executionContext: ExecutionContext)

@@ -21,10 +21,10 @@ import play.api.mvc.{BodyParsers, Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAuthAction @Inject() (
+class FakeAllowAllAuthAction @Inject() (
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends AuthAction {
+    extends AllowAllAuthAction {
 
   override def invokeBlock[A](
     request: Request[A],
