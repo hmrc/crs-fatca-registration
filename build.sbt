@@ -5,8 +5,6 @@ ThisBuild / scalaVersion := "2.13.12"
 
 lazy val microservice = Project("crs-fatca-registration", file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
-  .settings(update / evictionWarningOptions :=
-    EvictionWarningOptions.default.withWarnScalaVersionEviction(false))
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     PlayKeys.playDefaultPort := 10031,
