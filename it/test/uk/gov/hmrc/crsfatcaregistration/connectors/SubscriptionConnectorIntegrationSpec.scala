@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.crsfatcaregistration.connectors
+package it.test.uk.gov.hmrc.crsfatcaregistration.connectors
 
 import com.github.tomakehurst.wiremock.http.RequestMethod
+import it.test.uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.concurrent.IntegrationPatience
@@ -24,9 +25,9 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.http.Status.OK
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.crsfatcaregistration.SpecBase
+import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
 import uk.gov.hmrc.crsfatcaregistration.generators.{Generators, ModelGenerators}
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, UpdateSubscriptionRequest}
-import uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.crsfatcaregistration.controllers
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Prop.forAll
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.bind
@@ -33,6 +33,7 @@ import uk.gov.hmrc.crsfatcaregistration.generators.Generators
 import uk.gov.hmrc.crsfatcaregistration.models._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -374,7 +375,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     "should return CONFLICT when one occurs" in {
       val errorDetails = ErrorDetails(
         ErrorDetail(
-          DateTime.now().toString,
+          LocalDate.now().toString,
           Some("xx"),
           "409",
           "CONFLICT",

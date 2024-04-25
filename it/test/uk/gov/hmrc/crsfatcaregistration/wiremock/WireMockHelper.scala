@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.crsfatcaregistration.wiremock
+package it.test.uk.gov.hmrc.crsfatcaregistration.wiremock
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, ResponseDefinitionBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders, RequestMethod}
 import com.github.tomakehurst.wiremock.{client, WireMockServer}
-import uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper.{wireMockPort, MappingBuilderExt, ResponseDefinitionBuilderExt}
+import WireMockHelper.{wireMockPort, MappingBuilderExt, ResponseDefinitionBuilderExt}
 
 import java.net.ServerSocket
 import scala.jdk.CollectionConverters._
