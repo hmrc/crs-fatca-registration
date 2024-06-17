@@ -42,32 +42,34 @@ class RegistrationWithUtrController @Inject() (
 
   def sendAndRetrieveRegWithUtr: Action[JsValue] = authenticate(parse.json).async {
     implicit request =>
-      val uniqueTaxReference: JsResult[Utr] =
-        request.body.validate[Utr]
+      val uniqueTaxReference: JsResult[UniqueTaxpayerReference] =
+        request.body.validate[UniqueTaxpayerReference]
 
       uniqueTaxReference.fold(
         invalid = _ => Future.successful(BadRequest("")),
         valid = utr => {
-          val withIDRegistration: RegisterWithID =
-            RegisterWithID(
-              RegisterWithIDRequest(
-                requestCommon = RequestCommon.apply,
-                requestDetail = RequestWithIDDetails(
-                  "UTR",
-                  utr.value,
-                  requiresNameMatch = false,
-                  isAnAgent = false,
-                  partnerDetails = None
-                )
-              )
-            )
+          val registrationWithIdPayload = buildPayload(utr)
           for {
-            response <- registrationConnector.sendAndRetrieveRegWithUtr(withIDRegistration)
+            response <- registrationConnector.sendAndRetrieveRegWithUtr(registrationWithIdPayload)
           } yield convertToResult(response)
         }
       )
 
   }
+
+  private def buildPayload(utr: UniqueTaxpayerReference): RegisterWithID =
+    RegisterWithID(
+      RegisterWithIDRequest(
+        requestCommon = RequestCommon.apply,
+        requestDetail = RequestWithIDDetails(
+          "UTR",
+          utr.value,
+          requiresNameMatch = false,
+          isAnAgent = false,
+          partnerDetails = None
+        )
+      )
+    )
 
   private def convertToResult(httpResponse: HttpResponse): Result =
     httpResponse.status match {

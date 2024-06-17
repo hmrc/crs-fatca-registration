@@ -69,7 +69,7 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[Utr]) {
+      forAll(arbitrary[UniqueTaxpayerReference]) {
         uniqueTaxReference =>
           val request =
             FakeRequest(
@@ -96,7 +96,7 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[Utr]) {
+      forAll(arbitrary[UniqueTaxpayerReference]) {
         uniqueTaxReference =>
           val request =
             FakeRequest(
@@ -149,7 +149,7 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[Utr]) {
+      forAll(arbitrary[UniqueTaxpayerReference]) {
         uniqueTaxReference =>
           val request =
             FakeRequest(
@@ -190,7 +190,7 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[Utr]) {
+      forAll(arbitrary[UniqueTaxpayerReference]) {
         uniqueTaxReference =>
           val request =
             FakeRequest(
@@ -217,7 +217,7 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[Utr]) {
+      forAll(arbitrary[UniqueTaxpayerReference]) {
         uniqueTaxReference =>
           val request =
             FakeRequest(
