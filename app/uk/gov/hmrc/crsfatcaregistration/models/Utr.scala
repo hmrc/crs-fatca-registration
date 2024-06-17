@@ -16,4 +16,10 @@
 
 package uk.gov.hmrc.crsfatcaregistration.models
 
+import play.api.libs.json.{Json, OFormat}
+
 case class Utr(value: String)
+
+object Utr {
+  implicit val format: OFormat[Utr] = Json.format[Utr]
+}

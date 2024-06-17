@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2024 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package uk.gov.hmrc.crsfatcaregistration.controllers
 
 import org.mockito.ArgumentMatchers.any
@@ -85,21 +69,21 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[RegisterWithID]) {
-        withIDRegistration =>
+      forAll(arbitrary[Utr]) {
+        uniqueTaxReference =>
           val request =
             FakeRequest(
               POST,
               sutRoute
             )
-              .withJsonBody(Json.toJson(withIDRegistration))
+              .withJsonBody(Json.toJson(uniqueTaxReference))
 
           val result = route(application, request).value
           status(result) mustEqual OK
       }
     }
 
-    "should return bad request when one is encountered" in {
+    "should return bad request when BAD_REQUEST is encountered" in {
       when(
         mockRegistrationConnector.sendAndRetrieveRegWithUtr(any[RegisterWithID]())(
           any[HeaderCarrier](),
@@ -112,14 +96,14 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[RegisterWithID]) {
-        withIdSubscription =>
+      forAll(arbitrary[Utr]) {
+        uniqueTaxReference =>
           val request =
             FakeRequest(
               POST,
               sutRoute
             )
-              .withJsonBody(Json.toJson(withIdSubscription))
+              .withJsonBody(Json.toJson(uniqueTaxReference))
 
           val result = route(application, request).value
 
@@ -140,18 +124,16 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[RegisterWithID]) {
-        _ =>
-          val request =
-            FakeRequest(
-              POST,
-              sutRoute
-            )
-              .withJsonBody(Json.parse("""{"value": "field"}"""))
+      val request =
+        FakeRequest(
+          POST,
+          sutRoute
+        )
+          .withJsonBody(Json.parse("""{"utr": {"value": ""}}"""))
 
-          val result = route(application, request).value
-          status(result) mustEqual BAD_REQUEST
-      }
+      val result = route(application, request).value
+      status(result) mustEqual BAD_REQUEST
+
     }
 
     "should return not found when one is encountered" in {
@@ -167,14 +149,14 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[RegisterWithID]) {
-        withIdSubscription =>
+      forAll(arbitrary[Utr]) {
+        uniqueTaxReference =>
           val request =
             FakeRequest(
               POST,
               sutRoute
             )
-              .withJsonBody(Json.toJson(withIdSubscription))
+              .withJsonBody(Json.toJson(uniqueTaxReference))
 
           val result = route(application, request).value
           status(result) mustEqual NOT_FOUND
@@ -208,14 +190,14 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[RegisterWithID]) {
-        withIdSubscription =>
+      forAll(arbitrary[Utr]) {
+        uniqueTaxReference =>
           val request =
             FakeRequest(
               POST,
               sutRoute
             )
-              .withJsonBody(Json.toJson(withIdSubscription))
+              .withJsonBody(Json.toJson(uniqueTaxReference))
 
           val result = route(application, request).value
           status(result) mustEqual FORBIDDEN
@@ -235,19 +217,20 @@ class RegistrationWithUtrControllerSpec extends SpecBase with Generators with Sc
           )
         )
 
-      forAll(arbitrary[RegisterWithID]) {
-        withIdSubscription =>
+      forAll(arbitrary[Utr]) {
+        uniqueTaxReference =>
           val request =
             FakeRequest(
               POST,
               sutRoute
             )
-              .withJsonBody(Json.toJson(withIdSubscription))
+              .withJsonBody(Json.toJson(uniqueTaxReference))
 
           val result = route(application, request).value
           status(result) mustEqual INTERNAL_SERVER_ERROR
       }
     }
+
   }
 
 }
