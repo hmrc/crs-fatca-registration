@@ -13,4 +13,4 @@ POST    /subscription/read-subscription        uk.gov.hmrc.crsfatcaregistration.
 PUT     /subscription/update-subscription      uk.gov.hmrc.crsfatcaregistration.controllers.SubscriptionController.updateSubscription
 
 # org with utr, used for address reteival in FI manaagement
-POST    /registration/v2/organisation/utr      uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationWithUtrController.sendAndRetrieveRegWithUtr
+POST    /registration/organisation/utr-only      uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withUTROnly

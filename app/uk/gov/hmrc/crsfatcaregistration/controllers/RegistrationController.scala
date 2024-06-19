@@ -23,7 +23,15 @@ import play.api.mvc.{Action, ControllerComponents, Request, Result}
 import uk.gov.hmrc.crsfatcaregistration.auth.AdminOnlyAuthAction
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.connectors.RegistrationConnector
-import uk.gov.hmrc.crsfatcaregistration.models.{ErrorDetails, RegisterWithID, RegisterWithoutId}
+import uk.gov.hmrc.crsfatcaregistration.models.{
+  ErrorDetails,
+  RegisterWithID,
+  RegisterWithIDRequest,
+  RegisterWithoutId,
+  RequestCommon,
+  RequestWithIDDetails,
+  UniqueTaxpayerReference
+}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -94,6 +102,35 @@ class RegistrationController @Inject() (
         } yield convertToResult(response)
     )
   }
+
+  def withUTROnly: Action[JsValue] = authenticate(parse.json).async {
+    implicit request =>
+      val uniqueTaxReference: JsResult[UniqueTaxpayerReference] =
+        request.body.validate[UniqueTaxpayerReference]
+
+      uniqueTaxReference.fold(
+        invalid = _ => Future.successful(BadRequest("")),
+        valid = utr =>
+          for {
+            response <- registrationConnector.sendWithID(buildPayload(utr))
+          } yield convertToResult(response)
+      )
+
+  }
+
+  private def buildPayload(utr: UniqueTaxpayerReference): RegisterWithID =
+    RegisterWithID(
+      RegisterWithIDRequest(
+        requestCommon = RequestCommon.apply,
+        requestDetail = RequestWithIDDetails(
+          "UTR",
+          utr.value,
+          requiresNameMatch = false,
+          isAnAgent = false,
+          partnerDetails = None
+        )
+      )
+    )
 
   private def convertToResult(httpResponse: HttpResponse): Result =
     httpResponse.status match {
