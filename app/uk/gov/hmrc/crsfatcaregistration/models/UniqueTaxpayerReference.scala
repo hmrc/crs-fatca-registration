@@ -16,4 +16,10 @@
 
 package uk.gov.hmrc.crsfatcaregistration.models
 
-case class Utr(value: String)
+import play.api.libs.json.{Json, OFormat}
+
+case class UniqueTaxpayerReference(value: String)
+
+object UniqueTaxpayerReference {
+  implicit val format: OFormat[UniqueTaxpayerReference] = Json.format[UniqueTaxpayerReference]
+}

@@ -11,3 +11,6 @@ POST    /registration/organisation/noId        uk.gov.hmrc.crsfatcaregistration.
 POST    /subscription/create-subscription      uk.gov.hmrc.crsfatcaregistration.controllers.SubscriptionController.createSubscription
 POST    /subscription/read-subscription        uk.gov.hmrc.crsfatcaregistration.controllers.SubscriptionController.readSubscription
 PUT     /subscription/update-subscription      uk.gov.hmrc.crsfatcaregistration.controllers.SubscriptionController.updateSubscription
+
+# org with utr, used for address reteival in FI manaagement
+POST    /registration/organisation/utr-only      uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withUTROnly

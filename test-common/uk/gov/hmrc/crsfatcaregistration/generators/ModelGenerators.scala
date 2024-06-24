@@ -48,14 +48,14 @@ trait ModelGenerators {
     } yield Nino(f"$prefix$number%06d$suffix")
   }
 
-  implicit val arbitraryUtr: Arbitrary[Utr] = Arbitrary {
+  implicit val arbitraryUtr: Arbitrary[UniqueTaxpayerReference] = Arbitrary {
     val minT        = 0
     val maxT        = 9
     val givenLength = 10
 
     for {
       value <- Gen.listOfN(givenLength, Gen.chooseNum(minT, maxT)).map(_.mkString)
-    } yield Utr(value)
+    } yield UniqueTaxpayerReference(value)
   }
 
   implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {

@@ -94,17 +94,6 @@ object RequestParameter {
   implicit val indentifierFormats: OFormat[RequestParameter] = Json.format[RequestParameter]
 }
 
-case class RequestCommon(
-  receiptDate: String,
-  regime: String,
-  acknowledgementReference: String,
-  requestParameters: Option[Seq[RequestParameter]]
-)
-
-object RequestCommon {
-  implicit val requestCommonFormats: OFormat[RequestCommon] = Json.format[RequestCommon]
-}
-
 case class RequestDetails(
   organisation: Option[NoIdOrganisation],
   individual: Option[NoIdIndividual],
