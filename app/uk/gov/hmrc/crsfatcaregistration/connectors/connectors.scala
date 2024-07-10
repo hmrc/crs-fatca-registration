@@ -76,9 +76,9 @@ package object connectors {
           )
           .getOrElse(UUID.randomUUID().toString)
       },
-      "content-type"  -> "application/json",
-      "accept"        -> "application/json",
-      "Environment"   -> eisEnvironment
+      "content-type" -> "application/json",
+      "accept"       -> "application/json",
+      "Environment"  -> eisEnvironment
     )
   }
 
