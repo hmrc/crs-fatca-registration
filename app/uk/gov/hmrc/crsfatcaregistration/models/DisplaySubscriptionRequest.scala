@@ -18,7 +18,7 @@ package uk.gov.hmrc.crsfatcaregistration.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DisplaySubscriptionRequest(idType: String, idNumber: String)
+case class DisplaySubscriptionRequest(idNumber: String)
 
 object DisplaySubscriptionRequest {
 

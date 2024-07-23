@@ -49,7 +49,7 @@ class SubscriptionConnector @Inject() (
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val serviceName = "read-subscription"
     http.GET[HttpResponse](
-      s"${config.baseUrl(serviceName)}/${params.idType}/${params.idNumber}",
+      s"${config.baseUrl(serviceName)}/${params.idNumber}",
       headers = extraHeaders(config, serviceName)
     )(
       rds = httpReads,

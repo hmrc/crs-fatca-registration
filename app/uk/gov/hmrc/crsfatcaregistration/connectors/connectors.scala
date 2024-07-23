@@ -76,10 +76,9 @@ package object connectors {
           )
           .getOrElse(UUID.randomUUID().toString)
       },
-      "x-regime-type" -> "CRSFATCA",
-      "content-type"  -> "application/json",
-      "accept"        -> "application/json",
-      "Environment"   -> eisEnvironment
+      "content-type" -> "application/json",
+      "accept"       -> "application/json",
+      "Environment"  -> eisEnvironment
     )
   }
 
