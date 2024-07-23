@@ -265,10 +265,8 @@ trait ModelGenerators {
 
   implicit val arbitraryDisplaySubscriptionRequestDetail: Arbitrary[DisplaySubscriptionRequest] = Arbitrary {
     for {
-      idType   <- RegexpGen.from("[A-Z]{1,6}")
       idNumber <- RegexpGen.from("[A-Z0-9]{1,15}")
     } yield DisplaySubscriptionRequest(
-      idType = idType,
       idNumber = idNumber
     )
   }
