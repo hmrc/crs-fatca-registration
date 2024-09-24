@@ -86,7 +86,7 @@ class AdminOnlyAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with Moc
     }
 
     "the user is logged in as Agent" must {
-      "must return UNAUTHORIZED request" in {
+      "must return request" in {
         val retrieval: AuthRetrievals = Some(Agent) ~ Some(User)
         when(
           mockAuthConnector
@@ -100,7 +100,7 @@ class AdminOnlyAuthActionSpec extends PlaySpec with GuiceOneAppPerSuite with Moc
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
-        status(result) mustBe UNAUTHORIZED
+        status(result) mustBe OK
       }
     }
 

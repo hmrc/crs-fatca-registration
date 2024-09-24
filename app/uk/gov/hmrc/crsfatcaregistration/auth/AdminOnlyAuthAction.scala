@@ -63,8 +63,7 @@ class AdminOnlyAuthActionImpl @Inject() (
     credentialRole: Option[CredentialRole]
   ): Boolean =
     affinityGroup match {
-      case Some(Agent) => false
-      case Some(Organisation) =>
+      case Some(Organisation) | Some(Agent) =>
         credentialRole.fold(false)(
           cr => cr == User
         )
