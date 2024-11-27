@@ -34,7 +34,7 @@ object RequestCommon {
 
   def apply: RequestCommon = {
     val clock           = Clock.systemDefaultZone()
-    val regime: String  = "CRSFATCA"
+    val regime: String  = "CRFA"
     val acknRef: String = randomUUID().toString.replaceAll("-", "") // uuids are 36 and spec demands 32
     // Format: ISO 8601 YYYY-MM-DDTHH:mm:ssZ e.g. 2020-09-23T16:12:11Z
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")

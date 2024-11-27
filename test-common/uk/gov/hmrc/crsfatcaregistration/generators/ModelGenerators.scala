@@ -77,7 +77,7 @@ trait ModelGenerators {
 
     } yield RequestCommon(
       receiptDate = receiptDate,
-      regime = "CRSFATCA",
+      regime = "CRFA",
       acknowledgementReference = acknowledgementRef,
       None
     )
