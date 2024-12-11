@@ -86,8 +86,8 @@ class SubscriptionController @Inject() (
 
   private def convertToResult(httpResponse: HttpResponse): Result =
     httpResponse.status match {
-      case OK        => Ok(httpResponse.body)
-      case NOT_FOUND => NotFound(httpResponse.body)
+      case status if is2xx(status) => Ok(httpResponse.body)
+      case NOT_FOUND               => NotFound(httpResponse.body)
       case BAD_REQUEST =>
         logDownStreamError(httpResponse.body)
         BadRequest(httpResponse.body)
@@ -100,15 +100,17 @@ class SubscriptionController @Inject() (
         logDownStreamError(httpResponse.body)
         ServiceUnavailable(httpResponse.body)
 
-      case CONFLICT =>
+      case UNPROCESSABLE_ENTITY =>
         logDownStreamError(httpResponse.body)
-        Conflict(httpResponse.body)
+        UnprocessableEntity(httpResponse.body)
 
       case _ =>
         logDownStreamError(httpResponse.body)
         InternalServerError(httpResponse.body)
 
     }
+
+  def is2xx(status: Int): Boolean = status >= 200 && status < 300
 
   private def logDownStreamError(body: String): Unit = {
     val error = Try(Json.parse(body).validate[ErrorDetails])

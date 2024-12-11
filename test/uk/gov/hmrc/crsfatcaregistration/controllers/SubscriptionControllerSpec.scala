@@ -43,10 +43,9 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
     (NOT_FOUND, NOT_FOUND),
     (BAD_REQUEST, BAD_REQUEST),
     (FORBIDDEN, FORBIDDEN),
-    (UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR),
+    (UNPROCESSABLE_ENTITY, UNPROCESSABLE_ENTITY),
     (BAD_GATEWAY, INTERNAL_SERVER_ERROR),
-    (SERVICE_UNAVAILABLE, SERVICE_UNAVAILABLE),
-    (CONFLICT, CONFLICT)
+    (SERVICE_UNAVAILABLE, SERVICE_UNAVAILABLE)
   )
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
@@ -102,6 +101,33 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
       ).thenReturn(
         Future.successful(
           HttpResponse(200, Json.obj(), Map.empty[String, Seq[String]])
+        )
+      )
+
+      forAll(arbitrary[DisplaySubscriptionRequest]) {
+        readSubscriptionRequest =>
+          val request =
+            FakeRequest(
+              POST,
+              routes.SubscriptionController.readSubscription.url
+            )
+              .withJsonBody(Json.toJson(readSubscriptionRequest))
+
+          val result = route(application, request).value
+          status(result) mustEqual OK
+      }
+    }
+
+    s"should return OK when ReadSubscriptionRequest is valid and returns $CREATED" in {
+      when(
+        mockSubscriptionConnector
+          .readSubscriptionInformation(any[DisplaySubscriptionRequest]())(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+      ).thenReturn(
+        Future.successful(
+          HttpResponse(201, Json.obj(), Map.empty[String, Seq[String]])
         )
       )
 
@@ -372,13 +398,13 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
       }
     }
 
-    "should return CONFLICT when one occurs" in {
+    "should return UNPROCESSABLE_ENTITY when one occurs" in {
       val errorDetails = ErrorDetails(
         ErrorDetail(
           LocalDate.now().toString,
           Some("xx"),
-          "409",
-          "CONFLICT",
+          "422",
+          "UNPROCESSABLE_ENTITY",
           "",
           Some(SourceFaultDetail(Seq("a", "b")))
         )
@@ -393,7 +419,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
         .thenReturn(
           Future.successful(
             HttpResponse(
-              409,
+              422,
               Json.toJson(errorDetails),
               Map.empty[String, Seq[String]]
             )
@@ -410,7 +436,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
               .withJsonBody(Json.toJson(subscriptionRequest))
 
           val result = route(application, request).value
-          status(result) mustEqual CONFLICT
+          status(result) mustEqual UNPROCESSABLE_ENTITY
       }
     }
 

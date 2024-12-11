@@ -76,7 +76,7 @@ class SubscriptionConnectorIntegrationSpec
   "SubscriptionConnector" - {
     "create subscription" - {
       "must return status as OK for submission of Subscription" in {
-        stubResponse("/dac6/dct70c/v1", OK)
+        stubResponse("/dac6/dct102c/v1", OK)
 
         forAll(arbitrary[CreateSubscriptionRequest]) {
           sub =>
@@ -89,7 +89,7 @@ class SubscriptionConnectorIntegrationSpec
 
         forAll(arbitrary[CreateSubscriptionRequest], errorCodes) {
           (sub, errorCode) =>
-            stubResponse("/dac6/dct70c/v1", errorCode)
+            stubResponse("/dac6/dct102c/v1", errorCode)
 
             val result = connector.sendSubscriptionInformation(sub)
             result.futureValue.status mustBe errorCode
