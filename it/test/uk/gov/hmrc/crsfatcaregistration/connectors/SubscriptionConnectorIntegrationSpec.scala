@@ -102,7 +102,7 @@ class SubscriptionConnectorIntegrationSpec
 
         forAll(arbitrary[DisplaySubscriptionRequest]) {
           sub =>
-            stubResponse(s"/dac6/dct70d/v1/${sub.idNumber}", OK, RequestMethod.GET)
+            stubResponse(s"/dac6/dct102d/v1/${sub.idNumber}", OK, RequestMethod.GET)
             val result = connector.readSubscriptionInformation(sub)
             result.futureValue.status mustBe OK
         }
@@ -112,7 +112,7 @@ class SubscriptionConnectorIntegrationSpec
 
         forAll(arbitrary[DisplaySubscriptionRequest], errorCodes) {
           (sub, errorCode) =>
-            stubResponse(s"/dac6/dct70d/v1/${sub.idNumber}", errorCode, RequestMethod.GET)
+            stubResponse(s"/dac6/dct102d/v1/${sub.idNumber}", errorCode, RequestMethod.GET)
 
             val result = connector.readSubscriptionInformation(sub)
             result.futureValue.status mustBe errorCode
