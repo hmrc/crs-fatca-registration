@@ -90,6 +90,8 @@ trait ModelGenerators {
       address        <- arbitrary[Address]
       contactDetails <- arbitrary[ContactDetails]
       identification <- Gen.option(arbitrary[Identification])
+      isAGroup       <- arbitrary[Boolean]
+      isAnAgent      <- arbitrary[Boolean]
     } yield RegisterWithoutId(
       RegisterWithoutIDRequest(
         requestCommon,
@@ -98,7 +100,9 @@ trait ModelGenerators {
           None,
           address = address,
           contactDetails = contactDetails,
-          identification = identification
+          identification = identification,
+          isAGroup = isAGroup,
+          isAnAgent = isAnAgent
         )
       )
     )
