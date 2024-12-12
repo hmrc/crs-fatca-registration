@@ -64,7 +64,7 @@ class RegistrationConnectorIntegrationSpec extends SpecBase with IntegrationPati
 
         forAll(arbitrary[RegisterWithoutId]) {
           sub =>
-            stubResponse("/dac6/dct70a/v1", OK)
+            stubResponse("/dac6/dct102a/v1", OK)
 
             val result = connector.sendWithoutIDInformation(sub)
             result.futureValue.status mustBe OK
@@ -75,7 +75,7 @@ class RegistrationConnectorIntegrationSpec extends SpecBase with IntegrationPati
 
         forAll(arbitrary[RegisterWithoutId]) {
           sub =>
-            stubResponse("/dac6/dct70a/v1", BAD_REQUEST)
+            stubResponse("/dac6/dct102a/v1", BAD_REQUEST)
 
             val result = connector.sendWithoutIDInformation(sub)
             result.futureValue.status mustBe BAD_REQUEST
@@ -86,7 +86,7 @@ class RegistrationConnectorIntegrationSpec extends SpecBase with IntegrationPati
 
         forAll(arbitrary[RegisterWithoutId]) {
           sub =>
-            stubResponse("/dac6/dct70a/v1", INTERNAL_SERVER_ERROR)
+            stubResponse("/dac6/dct102a/v1", INTERNAL_SERVER_ERROR)
 
             val result = connector.sendWithoutIDInformation(sub)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
@@ -99,7 +99,7 @@ class RegistrationConnectorIntegrationSpec extends SpecBase with IntegrationPati
 
         forAll(arbitrary[RegisterWithID]) {
           sub =>
-            stubResponse("/dac6/dct70b/v1", OK)
+            stubResponse("/dac6/dct102b/v1", OK)
 
             val result = connector.sendWithID(sub)
             result.futureValue.status mustBe OK
@@ -110,7 +110,7 @@ class RegistrationConnectorIntegrationSpec extends SpecBase with IntegrationPati
 
         forAll(arbitrary[RegisterWithID]) {
           sub =>
-            stubResponse("/dac6/dct70b/v1", BAD_REQUEST)
+            stubResponse("/dac6/dct102b/v1", BAD_REQUEST)
 
             val result = connector.sendWithID(sub)
             result.futureValue.status mustBe BAD_REQUEST
@@ -121,7 +121,7 @@ class RegistrationConnectorIntegrationSpec extends SpecBase with IntegrationPati
 
         forAll(arbitrary[RegisterWithID]) {
           sub =>
-            stubResponse("/dac6/dct70b/v1", INTERNAL_SERVER_ERROR)
+            stubResponse("/dac6/dct102b/v1", INTERNAL_SERVER_ERROR)
 
             val result = connector.sendWithID(sub)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
