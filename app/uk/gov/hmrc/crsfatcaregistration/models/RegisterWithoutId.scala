@@ -99,7 +99,9 @@ case class RequestDetails(
   individual: Option[NoIdIndividual],
   address: Address,
   contactDetails: ContactDetails,
-  identification: Option[Identification]
+  identification: Option[Identification],
+  isAGroup: Boolean,
+  isAnAgent: Boolean
 )
 
 object RequestDetails {
@@ -113,9 +115,11 @@ object RequestDetails {
         (__ \ "individual").readNullable[NoIdIndividual] and
         (__ \ "address").read[Address] and
         (__ \ "contactDetails").read[ContactDetails] and
-        (__ \ "identification").readNullable[Identification]
+        (__ \ "identification").readNullable[Identification] and
+        (__ \ "isAGroup").read[Boolean] and
+        (__ \ "isAnAgent").read[Boolean]
     )(
-      (organisation, individual, address, contactDetails, identification) =>
+      (organisation, individual, address, contactDetails, identification, isAGroup, isAnAgent) =>
         (organisation, individual) match {
           case (None, None) =>
             throw new Exception(
@@ -131,7 +135,9 @@ object RequestDetails {
               individual,
               address,
               contactDetails,
-              identification
+              identification,
+              isAGroup,
+              isAnAgent
             )
         }
     )
