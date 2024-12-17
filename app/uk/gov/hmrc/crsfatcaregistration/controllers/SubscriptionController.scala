@@ -24,6 +24,7 @@ import uk.gov.hmrc.crsfatcaregistration.auth.AuthActionSets
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, ErrorDetails, UpdateSubscriptionRequest}
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -109,8 +110,6 @@ class SubscriptionController @Inject() (
         InternalServerError(httpResponse.body)
 
     }
-
-  def is2xx(status: Int): Boolean = status >= 200 && status < 300
 
   private def logDownStreamError(body: String): Unit = {
     val error = Try(Json.parse(body).validate[ErrorDetails])
