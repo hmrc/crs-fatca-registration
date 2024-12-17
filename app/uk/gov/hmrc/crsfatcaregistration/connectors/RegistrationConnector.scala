@@ -17,38 +17,39 @@
 package uk.gov.hmrc.crsfatcaregistration.connectors
 
 import com.google.inject.Inject
+import play.api.libs.json.Json
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.models.{RegisterWithID, RegisterWithoutId}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationConnector @Inject() (
   val config: AppConfig,
-  val http: HttpClient
+  val http: HttpClientV2
 ) {
 
   def sendWithoutIDInformation(
     registration: RegisterWithoutId
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val serviceName = "register-without-id"
-    http.POST[RegisterWithoutId, HttpResponse](
-      config.baseUrl(serviceName),
-      registration,
-      headers = extraHeaders(config, serviceName)
-    )(wts = RegisterWithoutId.format, rds = httpReads, hc = hc, ec = ec)
+    http
+      .post(url"${config.baseUrl(serviceName)}")
+      .withBody(Json.toJson(registration))
+      .setHeader(extraHeaders(config, serviceName): _*)
+      .execute[HttpResponse]
   }
 
   def sendWithID(
     registration: RegisterWithID
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val serviceName = "register-with-id"
-
-    http.POST[RegisterWithID, HttpResponse](
-      config.baseUrl(serviceName),
-      registration,
-      headers = extraHeaders(config, serviceName)
-    )(wts = RegisterWithID.format, rds = httpReads, hc = hc, ec = ec)
+    http
+      .post(url"${config.baseUrl(serviceName)}")
+      .withBody(Json.toJson(registration))
+      .setHeader(extraHeaders(config, serviceName): _*)
+      .execute[HttpResponse]
   }
 
 }
