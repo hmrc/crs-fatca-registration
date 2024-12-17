@@ -17,61 +17,49 @@
 package uk.gov.hmrc.crsfatcaregistration.connectors
 
 import com.google.inject.Inject
+import play.api.libs.json.Json
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, UpdateSubscriptionRequest}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionConnector @Inject() (
   val config: AppConfig,
-  val http: HttpClient
+  val http: HttpClientV2
 ) {
 
   def sendSubscriptionInformation(
     subscription: CreateSubscriptionRequest
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val serviceName = "create-subscription"
-    http.POST[CreateSubscriptionRequest, HttpResponse](
-      config.baseUrl(serviceName),
-      subscription,
-      headers = extraHeaders(config, serviceName)
-    )(
-      wts = CreateSubscriptionRequest.format,
-      rds = httpReads,
-      hc = hc,
-      ec = ec
-    )
+    http
+      .post(url"${config.baseUrl(serviceName)}")
+      .withBody(Json.toJson(subscription))
+      .setHeader(extraHeaders(config, serviceName): _*)
+      .execute[HttpResponse]
   }
 
   def readSubscriptionInformation(
     params: DisplaySubscriptionRequest
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val serviceName = "read-subscription"
-    http.GET[HttpResponse](
-      s"${config.baseUrl(serviceName)}/${params.idNumber}",
-      headers = extraHeaders(config, serviceName)
-    )(
-      rds = httpReads,
-      hc = hc,
-      ec = ec
-    )
+    http
+      .get(url"${config.baseUrl(serviceName)}/${params.idNumber}")
+      .setHeader(extraHeaders(config, serviceName): _*)
+      .execute[HttpResponse]
   }
 
   def updateSubscriptionInformation(
-    updateSubscriptionRequest: UpdateSubscriptionRequest
+    updateSubscription: UpdateSubscriptionRequest
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val serviceName = "update-subscription"
-    http.PUT[UpdateSubscriptionRequest, HttpResponse](
-      config.baseUrl(serviceName),
-      updateSubscriptionRequest,
-      headers = extraHeaders(config, serviceName)
-    )(
-      wts = UpdateSubscriptionRequest.format,
-      rds = httpReads,
-      hc = hc,
-      ec = ec
-    )
+    http
+      .put(url"${config.baseUrl(serviceName)}")
+      .withBody(Json.toJson(updateSubscription))
+      .setHeader(extraHeaders(config, serviceName): _*)
+      .execute[HttpResponse]
   }
 
 }
