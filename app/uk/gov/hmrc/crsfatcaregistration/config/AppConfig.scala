@@ -17,10 +17,8 @@
 package uk.gov.hmrc.crsfatcaregistration.config
 
 import play.api.Configuration
-import uk.gov.hmrc.http.StringContextOps
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.net.URL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
