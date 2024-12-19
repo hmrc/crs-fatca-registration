@@ -24,6 +24,7 @@ import uk.gov.hmrc.crsfatcaregistration.auth.AuthActionSets
 import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.connectors.SubscriptionConnector
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, ErrorDetails, UpdateSubscriptionRequest}
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -86,8 +87,8 @@ class SubscriptionController @Inject() (
 
   private def convertToResult(httpResponse: HttpResponse): Result =
     httpResponse.status match {
-      case OK        => Ok(httpResponse.body)
-      case NOT_FOUND => NotFound(httpResponse.body)
+      case status if is2xx(status) => Ok(httpResponse.body)
+      case NOT_FOUND               => NotFound(httpResponse.body)
       case BAD_REQUEST =>
         logDownStreamError(httpResponse.body)
         BadRequest(httpResponse.body)
@@ -100,9 +101,9 @@ class SubscriptionController @Inject() (
         logDownStreamError(httpResponse.body)
         ServiceUnavailable(httpResponse.body)
 
-      case CONFLICT =>
+      case UNPROCESSABLE_ENTITY =>
         logDownStreamError(httpResponse.body)
-        Conflict(httpResponse.body)
+        UnprocessableEntity(httpResponse.body)
 
       case _ =>
         logDownStreamError(httpResponse.body)
