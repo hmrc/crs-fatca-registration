@@ -85,7 +85,7 @@ class UpdateSubscriptionEndpointIntegrationSpec
 
   "update subscription endpoint" - {
 
-    val UpdateSubscriptionUrl = "/dac6/dct70e/v1"
+    val UpdateSubscriptionUrl = "/dac6/dct102e/v1"
 
     "should respond with OK status when subscription update succeeds" in {
 

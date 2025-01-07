@@ -121,7 +121,7 @@ class SubscriptionConnectorIntegrationSpec
     }
 
     "update subscription" - {
-      val UpdateSubscriptionUrl = "/dac6/dct70e/v1"
+      val UpdateSubscriptionUrl = "/dac6/dct102e/v1"
 
       "must return status as OK when the subscription update was successful" in {
         stubResponse(UpdateSubscriptionUrl, OK, RequestMethod.PUT)
