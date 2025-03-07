@@ -19,7 +19,7 @@ sbt test
 
 Run integration tests:
 ```
-sbt it:test
+sbt it/test
 ```
 
 ---
