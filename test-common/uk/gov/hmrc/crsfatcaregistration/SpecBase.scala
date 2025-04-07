@@ -20,7 +20,7 @@ import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, OptionValues, TryValues}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, OptionValues, PrivateMethodTester, TryValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
 import play.api.i18n.{Messages, MessagesApi}
@@ -40,7 +40,8 @@ trait SpecBase
     with ScalaFutures
     with MockitoSugar
     with BeforeAndAfterEach
-    with BeforeAndAfterAll {
+    with BeforeAndAfterAll
+    with PrivateMethodTester {
 
   def injector: Injector = app.injector
 
