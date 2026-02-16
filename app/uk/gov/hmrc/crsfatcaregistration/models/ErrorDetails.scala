@@ -26,10 +26,10 @@ object SourceFaultDetail {
 
 case class ErrorDetail(
   timestamp: String,
-  correlationId: Option[String],
-  errorCode: String,
-  errorMessage: String,
-  source: String,
+  correlationId: String,
+  errorCode: Option[String],
+  errorMessage: Option[String],
+  source: Option[String],
   sourceFaultDetail: Option[SourceFaultDetail]
 )
 

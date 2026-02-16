@@ -321,10 +321,10 @@ class RegistrationControllerSpec extends SpecBase with Generators with ScalaChec
         val errorDetails = ErrorDetails(
           ErrorDetail(
             LocalDate.now().toString,
-            Some("xx"),
-            "403",
-            "FORBIDDEN",
-            "",
+            "xx",
+            Some("403"),
+            Some("FORBIDDEN"),
+            Some(""),
             Some(SourceFaultDetail(Seq("a", "b")))
           )
         )
@@ -502,10 +502,10 @@ class RegistrationControllerSpec extends SpecBase with Generators with ScalaChec
         val errorDetails = ErrorDetails(
           ErrorDetail(
             LocalDate.now().toString,
-            Some("xx"),
-            "403",
-            "FORBIDDEN",
-            "",
+            "xx",
+            Some("403"),
+            Some("FORBIDDEN"),
+            Some(""),
             Some(SourceFaultDetail(Seq("a", "b")))
           )
         )

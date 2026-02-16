@@ -279,10 +279,10 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
         val errorDetails = ErrorDetails(
           ErrorDetail(
             LocalDate.now().toString,
-            Some("xx"),
-            "422",
-            "UNPROCESSABLE_ENTITY",
-            "",
+            "xx",
+            Some("403"),
+            Some("FORBIDDEN"),
+            Some(""),
             Some(SourceFaultDetail(Seq("a", "b")))
           )
         )
