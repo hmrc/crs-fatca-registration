@@ -32,6 +32,7 @@ import uk.gov.hmrc.crsfatcaregistration.models.{
   RequestWithIDDetails,
   UniqueTaxpayerReference
 }
+import uk.gov.hmrc.crsfatcaregistration.services.audit.AuditService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -42,6 +43,7 @@ class RegistrationController @Inject() (
   val config: AppConfig,
   authenticate: AdminOnlyAuthAction,
   registrationConnector: RegistrationConnector,
+  auditService: AuditService,
   override val controllerComponents: ControllerComponents
 )(implicit executionContext: ExecutionContext)
     extends BackendController(controllerComponents) {
@@ -50,18 +52,74 @@ class RegistrationController @Inject() (
 
   private def withoutIDRegistration(
     request: Request[JsValue]
-  )(implicit hc: HeaderCarrier) = {
-    val noIdOrganisationRegistration: JsResult[RegisterWithoutId] =
-      request.body.validate[RegisterWithoutId]
+  )(implicit hc: HeaderCarrier): Future[Result] =
+    request.body
+      .validate[RegisterWithoutId]
+      .fold(
+        invalid = _ => Future.successful(BadRequest("")),
+        valid = sub =>
+          registrationConnector
+            .sendWithoutIDInformation(sub)
+            .map {
+              response =>
+                val result = convertToResult(response)
 
-    noIdOrganisationRegistration.fold(
-      invalid = _ => Future.successful(BadRequest("")),
-      valid = sub =>
-        for {
-          response <- registrationConnector.sendWithoutIDInformation(sub)
-        } yield convertToResult(response)
-    )
-  }
+                if (isSuccessful(result)) {
+                  val detail =
+                    sub.registerWithoutIDRequest.requestDetail
+
+                  val address =
+                    detail.address
+
+                  val contactDetails =
+                    detail.contactDetails
+
+                  val isOrganisation =
+                    detail.organisation.isDefined
+
+                  auditService.sendCreateRegistration(
+                    affinityType = if (isOrganisation) "Organisation" else "Individual",
+                    registeringAs = if (isOrganisation) "Organisation" else "Individual",
+                    registrationType = if (isOrganisation) "OrgWithoutID" else "IndividualWithoutId",
+                    idType = if (isOrganisation) "NotProvided" else "NINO",
+                    idValue = detail.identification
+                      .map(_.idNumber)
+                      .getOrElse("NoIdProvided"),
+                    tradingName = None,
+                    businessName = detail.organisation
+                      .map(_.organisationName),
+                    addressLine1 = address.addressLine1,
+                    addressLine2 = address.addressLine2,
+                    city = address.addressLine3,
+                    region = address.addressLine4,
+                    postcode = address.postalCode,
+                    country = address.countryCode,
+                    uprn = None,
+                    dateOfBirth = detail.individual
+                      .map(_.dateOfBirth.toString),
+                    firstContactName = detail.individual
+                      .map {
+                        individual =>
+                          s"${individual.name.firstName} ${individual.name.secondName}"
+                      }
+                      .getOrElse("/"),
+                    firstContactEmail = contactDetails.emailAddress
+                      .getOrElse("/"),
+                    firstContactTelephone = contactDetails.phoneNumber
+                      .orElse(contactDetails.mobileNumber),
+                    secondContactName = None,
+                    secondContactEmail = None,
+                    secondContactTelephone = None,
+                    fatcaId = "/"
+                  )
+                }
+
+                result
+            }
+      )
+
+  private def isSuccessful(result: Result): Boolean =
+    result.header.status >= 200 && result.header.status < 300
 
   def withoutID: Action[JsValue] = authenticate(parse.json).async {
     implicit request =>
