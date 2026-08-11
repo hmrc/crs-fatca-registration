@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class AuditService @Inject() (
   auditConnector: DefaultAuditConnector
-)(implicit ec: ExecutionContext, hc: HeaderCarrier) {
+)(implicit ec: ExecutionContext) {
 
   private val logger: Logger = Logger(this.getClass)
 
@@ -40,12 +40,12 @@ class AuditService @Inject() (
     idValue: String,
     tradingName: Option[String] = None,
     businessName: Option[String] = None,
-    addressLine1: String,
+    addressLine1: Option[String],
     addressLine2: Option[String] = None,
-    city: String,
+    city: Option[String],
     region: Option[String] = None,
     postcode: Option[String] = None,
-    country: String,
+    country: Option[String],
     uprn: Option[String] = None,
     dateOfBirth: Option[String] = None,
     firstContactName: String,
@@ -55,7 +55,7 @@ class AuditService @Inject() (
     secondContactEmail: Option[String] = None,
     secondContactTelephone: Option[String] = None,
     fatcaId: String
-  ): Unit = {
+  )(implicit hc: HeaderCarrier): Unit = {
 
     val event = CreateRegistration(
       affinityType = affinityType,

@@ -22,10 +22,12 @@ import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.crsfatcaregistration.auth.AdminOnlyAuthAction
 import uk.gov.hmrc.crsfatcaregistration.models.audit.CreateRegistration
 import uk.gov.hmrc.crsfatcaregistration.services.audit.AuditService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class AuditController @Inject() (
@@ -39,6 +41,8 @@ class AuditController @Inject() (
   def createRegistration: Action[JsValue] =
     authenticate(parse.json).async {
       implicit request =>
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+
         request.body
           .validate[CreateRegistration]
           .fold(
