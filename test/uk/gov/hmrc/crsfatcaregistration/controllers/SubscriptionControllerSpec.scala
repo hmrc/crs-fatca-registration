@@ -394,7 +394,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             val request =
               FakeRequest(
                 POST,
-                routes.SubscriptionController.readSubscription.url
+                routes.SubscriptionController.readSubscription().url
               )
                 .withJsonBody(Json.toJson(readSubscriptionRequest))
 
@@ -421,7 +421,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             val request =
               FakeRequest(
                 POST,
-                routes.SubscriptionController.readSubscription.url
+                routes.SubscriptionController.readSubscription().url
               )
                 .withJsonBody(Json.toJson(readSubscriptionRequest))
 
@@ -447,7 +447,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
         val request =
           FakeRequest(
             POST,
-            routes.SubscriptionController.readSubscription.url
+            routes.SubscriptionController.readSubscription().url
           )
             .withJsonBody(Json.parse("""{"value": "field"}"""))
 
@@ -474,7 +474,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             val request =
               FakeRequest(
                 POST,
-                routes.SubscriptionController.readSubscription.url
+                routes.SubscriptionController.readSubscription().url
               )
                 .withJsonBody(Json.toJson(readSubscriptionRequest))
 
@@ -502,7 +502,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             val request =
               FakeRequest(
                 POST,
-                routes.SubscriptionController.readSubscription.url
+                routes.SubscriptionController.readSubscription().url
               )
                 .withJsonBody(Json.toJson(readSubscriptionRequest))
 
@@ -534,7 +534,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             val request =
               FakeRequest(
                 POST,
-                routes.SubscriptionController.readSubscription.url
+                routes.SubscriptionController.readSubscription().url
               )
                 .withJsonBody(Json.toJson(readSubscriptionRequest))
 
@@ -562,7 +562,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             val request =
               FakeRequest(
                 POST,
-                routes.SubscriptionController.readSubscription.url
+                routes.SubscriptionController.readSubscription().url
               )
                 .withJsonBody(Json.toJson(readSubscriptionRequest))
 
@@ -590,7 +590,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             val request =
               FakeRequest(
                 POST,
-                routes.SubscriptionController.readSubscription.url
+                routes.SubscriptionController.readSubscription().url
               )
                 .withJsonBody(Json.toJson(readSubscriptionRequest))
 
@@ -607,7 +607,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
             when(mockSubscriptionConnector.updateSubscriptionInformation(mockitoEq(updateSubscriptionRequest))(any[HeaderCarrier](), any[ExecutionContext]()))
               .thenReturn(Future.successful(HttpResponse(OK, "Some Response", Map.empty)))
 
-            val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription.url)
+            val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription().url)
               .withJsonBody(Json.toJson(updateSubscriptionRequest))
 
             val result = route(application, request).value
@@ -616,7 +616,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
       }
 
       "must respond with BAD_REQUEST when given an invalid request" in {
-        val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription.url).withJsonBody(Json.parse("{}"))
+        val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription().url).withJsonBody(Json.parse("{}"))
 
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -630,7 +630,7 @@ class SubscriptionControllerSpec extends SpecBase with Generators with ScalaChec
                 when(mockSubscriptionConnector.updateSubscriptionInformation(any[UpdateSubscriptionRequest]())(any[HeaderCarrier](), any[ExecutionContext]()))
                   .thenReturn(Future.successful(HttpResponse(connectorErrorCode, "Some Error", Map.empty)))
 
-                val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription.url)
+                val request = FakeRequest(PUT, routes.SubscriptionController.updateSubscription().url)
                   .withJsonBody(Json.toJson(updateSubscriptionRequest))
 
                 val result = route(application, request).value
