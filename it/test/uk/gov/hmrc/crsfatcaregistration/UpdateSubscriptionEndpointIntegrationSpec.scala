@@ -20,11 +20,10 @@ import com.github.tomakehurst.wiremock.http.RequestMethod
 import it.test.uk.gov.hmrc.crsfatcaregistration.wiremock.WireMockHelper
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.concurrent.IntegrationPatience
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.http.Status.OK
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -35,6 +34,7 @@ import uk.gov.hmrc.crsfatcaregistration.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.auth.{AllowAllAuthAction, FakeAllowAllAuthAction}
 import uk.gov.hmrc.crsfatcaregistration.generators.{Generators, ModelGenerators}
 import uk.gov.hmrc.crsfatcaregistration.models.UpdateSubscriptionRequest
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class UpdateSubscriptionEndpointIntegrationSpec
     extends SpecBase

@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.3.5"
 
 lazy val microservice = Project("crs-fatca-registration", file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
@@ -12,13 +12,15 @@ lazy val microservice = Project("crs-fatca-registration", file("."))
     Test / scalafmtOnCompile := true,
     ThisBuild / scalafmtOnCompile.withRank(KeyRanks.Invisible) := true,
     scalacOptions ++= Seq(
-      "-Wconf:src=routes/.*:s",
-      "-Wconf:src=.+/test/.+:s",
-      "-Wconf:cat=deprecation&msg=\\.*()\\.*:s",
-      "-Wconf:cat=unused-imports&site=<empty>:s",
-      "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
-      "-Wconf:cat=unused&src=.*Routes\\.scala:s"
-    )
+      "-Wconf:cat=deprecation:w",
+      "-Wconf:cat=feature:w",
+      "-Wconf:src=target/.*:s"
+    ),
+    scalacOptions ++= Seq(
+      "-Wconf:msg=unused.*&src=.*\\.routes:s",
+      "-Wconf:src=.+/test/.+:s"
+    ),
+    scalacOptions ~= (_.distinct),
   )
   .settings(inConfig(Test)(testSettings): _*)
   .settings(resolvers += Resolver.jcenterRepo)

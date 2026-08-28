@@ -22,7 +22,7 @@ import uk.gov.hmrc.crsfatcaregistration.config.AppConfig
 import uk.gov.hmrc.crsfatcaregistration.models.{CreateSubscriptionRequest, DisplaySubscriptionRequest, UpdateSubscriptionRequest}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionConnector @Inject() (
