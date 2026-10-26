@@ -16,3 +16,4 @@ PUT     /subscription/update-subscription      uk.gov.hmrc.crsfatcaregistration.
 POST    /registration/organisation/utr-only      uk.gov.hmrc.crsfatcaregistration.controllers.RegistrationController.withUTROnly
 
 POST    /audit/create-registration             uk.gov.hmrc.crsfatcaregistration.controllers.AuditController.createRegistration
+POST    /audit/update-contact-details          uk.gov.hmrc.crsfatcaregistration.controllers.AuditController.updateContactDetails

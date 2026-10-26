@@ -18,7 +18,7 @@ package uk.gov.hmrc.crsfatcaregistration.services.audit
 
 import play.api.Logger
 import play.api.libs.json.OWrites
-import uk.gov.hmrc.crsfatcaregistration.models.audit.{AuditEvent, CreateRegistration}
+import uk.gov.hmrc.crsfatcaregistration.models.audit.{AuditEvent, CreateRegistration, UpdateContactDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.DefaultAuditConnector
 
@@ -33,60 +33,20 @@ class AuditService @Inject() (
   private val logger: Logger = Logger(this.getClass)
 
   def sendCreateRegistration(
-    affinityType: String,
-    registeringAs: String,
-    registrationType: String,
-    idType: String,
-    idValue: String,
-    tradingName: Option[String] = None,
-    businessName: Option[String] = None,
-    addressLine1: Option[String],
-    addressLine2: Option[String] = None,
-    city: Option[String],
-    region: Option[String] = None,
-    postcode: Option[String] = None,
-    country: Option[String],
-    uprn: Option[String] = None,
-    dateOfBirth: Option[String] = None,
-    firstContactName: String,
-    firstContactEmail: String,
-    firstContactTelephone: Option[String] = None,
-    secondContactName: Option[String] = None,
-    secondContactEmail: Option[String] = None,
-    secondContactTelephone: Option[String] = None,
-    fatcaId: String
-  )(implicit hc: HeaderCarrier): Unit = {
-
-    val event = CreateRegistration(
-      affinityType = affinityType,
-      registeringAs = registeringAs,
-      registrationType = registrationType,
-      idType = idType,
-      idValue = idValue,
-      tradingName = tradingName,
-      businessName = businessName,
-      addressLine1 = addressLine1,
-      addressLine2 = addressLine2,
-      city = city,
-      region = region,
-      postcode = postcode,
-      country = country,
-      uprn = uprn,
-      dateOfBirth = dateOfBirth,
-      firstContactName = firstContactName,
-      firstContactEmail = firstContactEmail,
-      firstContactTelephone = firstContactTelephone,
-      secondContactName = secondContactName,
-      secondContactEmail = secondContactEmail,
-      secondContactTelephone = secondContactTelephone,
-      fatcaId = fatcaId
-    )
-
+    auditRequest: CreateRegistration
+  )(implicit hc: HeaderCarrier): Unit =
     send(
       auditType = "CreateRegistration",
-      event = event
+      event = auditRequest
     )
-  }
+
+  def sendUpdateContactDetails(
+    auditRequest: UpdateContactDetails
+  )(implicit hc: HeaderCarrier): Unit =
+    send(
+      auditType = "UpdateContactDetails",
+      event = auditRequest
+    )
 
   private def send[E <: AuditEvent](
     auditType: String,

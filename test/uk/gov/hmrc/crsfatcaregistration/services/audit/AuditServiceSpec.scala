@@ -16,18 +16,16 @@
 
 package uk.gov.hmrc.crsfatcaregistration.services.audit
 
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.Mockito.{mockingDetails, reset}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.crsfatcaregistration.models.audit.CreateRegistration
+import uk.gov.hmrc.crsfatcaregistration.models.audit.{CreateRegistration, UpdateContactDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.DefaultAuditConnector
-import play.api.libs.json.OWrites
+
 import scala.concurrent.ExecutionContext
-import org.mockito.Mockito.{mockingDetails, reset}
 
 class AuditServiceSpec extends AnyFreeSpec with Matchers with MockitoSugar with BeforeAndAfterEach {
 
@@ -36,9 +34,6 @@ class AuditServiceSpec extends AnyFreeSpec with Matchers with MockitoSugar with 
 
   implicit private val hc: HeaderCarrier =
     HeaderCarrier()
-
-  implicit private val createRegistrationWrites: OWrites[CreateRegistration] =
-    CreateRegistration.format
 
   private val mockAuditConnector =
     mock[DefaultAuditConnector]
@@ -83,30 +78,7 @@ class AuditServiceSpec extends AnyFreeSpec with Matchers with MockitoSugar with 
             fatcaId = "FATCA123456"
           )
 
-        service.sendCreateRegistration(
-          affinityType = expectedEvent.affinityType,
-          registeringAs = expectedEvent.registeringAs,
-          registrationType = expectedEvent.registrationType,
-          idType = expectedEvent.idType,
-          idValue = expectedEvent.idValue,
-          tradingName = expectedEvent.tradingName,
-          businessName = expectedEvent.businessName,
-          addressLine1 = expectedEvent.addressLine1,
-          addressLine2 = expectedEvent.addressLine2,
-          city = expectedEvent.city,
-          region = expectedEvent.region,
-          postcode = expectedEvent.postcode,
-          country = expectedEvent.country,
-          uprn = expectedEvent.uprn,
-          dateOfBirth = expectedEvent.dateOfBirth,
-          firstContactName = expectedEvent.firstContactName,
-          firstContactEmail = expectedEvent.firstContactEmail,
-          firstContactTelephone = expectedEvent.firstContactTelephone,
-          secondContactName = expectedEvent.secondContactName,
-          secondContactEmail = expectedEvent.secondContactEmail,
-          secondContactTelephone = expectedEvent.secondContactTelephone,
-          fatcaId = expectedEvent.fatcaId
-        )
+        service.sendCreateRegistration(expectedEvent)
 
         val invocations =
           mockingDetails(mockAuditConnector).getInvocations
@@ -114,9 +86,7 @@ class AuditServiceSpec extends AnyFreeSpec with Matchers with MockitoSugar with 
         invocations.size() mustBe 1
 
         val invocation =
-          invocations
-            .iterator()
-            .next()
+          invocations.iterator().next()
 
         invocation.getArgument[String](0) mustBe
           "CreateRegistration"
@@ -153,21 +123,7 @@ class AuditServiceSpec extends AnyFreeSpec with Matchers with MockitoSugar with 
             fatcaId = "FATCA123456"
           )
 
-        service.sendCreateRegistration(
-          affinityType = expectedEvent.affinityType,
-          registeringAs = expectedEvent.registeringAs,
-          registrationType = expectedEvent.registrationType,
-          idType = expectedEvent.idType,
-          idValue = expectedEvent.idValue,
-          addressLine1 = None,
-          city = None,
-          country = None,
-          dateOfBirth = expectedEvent.dateOfBirth,
-          firstContactName = expectedEvent.firstContactName,
-          firstContactEmail = expectedEvent.firstContactEmail,
-          firstContactTelephone = expectedEvent.firstContactTelephone,
-          fatcaId = expectedEvent.fatcaId
-        )
+        service.sendCreateRegistration(expectedEvent)
 
         val invocations =
           mockingDetails(mockAuditConnector).getInvocations
@@ -175,14 +131,73 @@ class AuditServiceSpec extends AnyFreeSpec with Matchers with MockitoSugar with 
         invocations.size() mustBe 1
 
         val invocation =
-          invocations
-            .iterator()
-            .next()
+          invocations.iterator().next()
 
         invocation.getArgument[String](0) mustBe
           "CreateRegistration"
 
         invocation.getArgument[CreateRegistration](1) mustBe
+          expectedEvent
+      }
+    }
+
+    "sendUpdateContactDetails" - {
+
+      "must send the correct UpdateContactDetails audit event" in {
+
+        val expectedEvent =
+          UpdateContactDetails(
+            fatcaId = "FATCA123456",
+            affinityType = "Organisation",
+            firstContactName = Some("John Smith"),
+            firstContactEmail = Some("john.smith@test.com"),
+            firstContactTelephone = Some("441234567890"),
+            secondContactName = Some("Jane Smith"),
+            secondContactEmail = Some("jane.smith@test.com"),
+            secondContactTelephone = Some("441234567891")
+          )
+
+        service.sendUpdateContactDetails(expectedEvent)
+
+        val invocations =
+          mockingDetails(mockAuditConnector).getInvocations
+
+        invocations.size() mustBe 1
+
+        val invocation =
+          invocations.iterator().next()
+
+        invocation.getArgument[String](0) mustBe
+          "UpdateContactDetails"
+
+        invocation.getArgument[UpdateContactDetails](1) mustBe
+          expectedEvent
+      }
+
+      "must send the audit event when optional contact details are not provided" in {
+
+        val expectedEvent =
+          UpdateContactDetails(
+            fatcaId = "FATCA123456",
+            affinityType = "Individual",
+            email = Some("john.smith@test.com"),
+            telephone = None
+          )
+
+        service.sendUpdateContactDetails(expectedEvent)
+
+        val invocations =
+          mockingDetails(mockAuditConnector).getInvocations
+
+        invocations.size() mustBe 1
+
+        val invocation =
+          invocations.iterator().next()
+
+        invocation.getArgument[String](0) mustBe
+          "UpdateContactDetails"
+
+        invocation.getArgument[UpdateContactDetails](1) mustBe
           expectedEvent
       }
     }
