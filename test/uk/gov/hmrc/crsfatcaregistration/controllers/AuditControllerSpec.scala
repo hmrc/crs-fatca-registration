@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.crsfatcaregistration.controllers
 
-import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -26,8 +27,9 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.crsfatcaregistration.SpecBase
 import uk.gov.hmrc.crsfatcaregistration.auth.{AdminOnlyAuthAction, FakeAdminOnlyAuthAction}
-import uk.gov.hmrc.crsfatcaregistration.models.audit.CreateRegistration
+import uk.gov.hmrc.crsfatcaregistration.models.audit.{CreateRegistration, UpdateContactDetails}
 import uk.gov.hmrc.crsfatcaregistration.services.audit.AuditService
+import uk.gov.hmrc.http.HeaderCarrier
 
 class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
 
@@ -60,8 +62,11 @@ class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
     super.beforeEach()
   }
 
-  private val auditRoute =
+  private val createRegistrationRoute =
     routes.AuditController.createRegistration.url
+
+  private val updateContactDetailsRoute =
+    routes.AuditController.updateContactDetails.url
 
   private val fullAuditRequest =
     CreateRegistration(
@@ -115,20 +120,6 @@ class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
       fatcaId = "FATCA123456"
     )
 
-  private def verifyAuditServiceCalled(): Unit = {
-
-    val invocations =
-      mockingDetails(mockAuditService).getInvocations
-
-    invocations.size() mustBe 1
-
-    invocations
-      .iterator()
-      .next()
-      .getMethod
-      .getName mustBe "sendCreateRegistration"
-  }
-
   "AuditController" - {
 
     "createRegistration" - {
@@ -138,7 +129,7 @@ class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
         val request =
           FakeRequest(
             POST,
-            auditRoute
+            createRegistrationRoute
           ).withJsonBody(
             Json.toJson(fullAuditRequest)
           )
@@ -148,7 +139,8 @@ class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         status(result) mustBe NO_CONTENT
 
-        verifyAuditServiceCalled()
+        verify(mockAuditService)
+          .sendCreateRegistration(eqTo(fullAuditRequest))(any[HeaderCarrier])
       }
 
       "must accept an audit request without address information" in {
@@ -156,7 +148,7 @@ class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
         val request =
           FakeRequest(
             POST,
-            auditRoute
+            createRegistrationRoute
           ).withJsonBody(
             Json.toJson(individualWithIdAuditRequest)
           )
@@ -166,7 +158,8 @@ class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         status(result) mustBe NO_CONTENT
 
-        verifyAuditServiceCalled()
+        verify(mockAuditService)
+          .sendCreateRegistration(eqTo(individualWithIdAuditRequest))(any[HeaderCarrier])
       }
 
       "must return BAD_REQUEST when Json cannot be validated" in {
@@ -174,11 +167,95 @@ class AuditControllerSpec extends SpecBase with BeforeAndAfterEach {
         val request =
           FakeRequest(
             POST,
-            auditRoute
+            createRegistrationRoute
           ).withJsonBody(
             Json.obj(
               "affinityType"  -> "Individual",
               "registeringAs" -> "Individual"
+            )
+          )
+
+        val result =
+          route(application, request).value
+
+        status(result) mustBe BAD_REQUEST
+
+        verifyNoInteractions(mockAuditService)
+      }
+    }
+
+    "updateContactDetails" - {
+
+      "must send the organisation audit request and return NO_CONTENT" in {
+
+        val auditRequest =
+          UpdateContactDetails(
+            fatcaId = "FATCA123456",
+            affinityType = "Organisation",
+            firstContactName = Some("John Smith"),
+            firstContactEmail = Some("john.smith@test.com"),
+            firstContactTelephone = Some("441234567890"),
+            secondContactName = Some("Jane Smith"),
+            secondContactEmail = Some("jane.smith@test.com"),
+            secondContactTelephone = Some("441234567891")
+          )
+
+        val request =
+          FakeRequest(
+            POST,
+            updateContactDetailsRoute
+          ).withJsonBody(
+            Json.toJson(auditRequest)
+          )
+
+        val result =
+          route(application, request).value
+
+        status(result) mustBe NO_CONTENT
+
+        verify(mockAuditService)
+          .sendUpdateContactDetails(eqTo(auditRequest))(any[HeaderCarrier])
+      }
+
+      "must accept an individual audit request without optional telephone information" in {
+
+        val auditRequest =
+          UpdateContactDetails(
+            fatcaId = "FATCA123456",
+            affinityType = "Individual",
+            email = Some("john.smith@test.com")
+          )
+
+        val request =
+          FakeRequest(
+            POST,
+            updateContactDetailsRoute
+          ).withJsonBody(
+            Json.obj(
+              "fatcaId"      -> "FATCA123456",
+              "affinityType" -> "Individual",
+              "email"        -> "john.smith@test.com"
+            )
+          )
+
+        val result =
+          route(application, request).value
+
+        status(result) mustBe NO_CONTENT
+
+        verify(mockAuditService)
+          .sendUpdateContactDetails(eqTo(auditRequest))(any[HeaderCarrier])
+      }
+
+      "must return BAD_REQUEST when required audit information is missing" in {
+
+        val request =
+          FakeRequest(
+            POST,
+            updateContactDetailsRoute
+          ).withJsonBody(
+            Json.obj(
+              "affinityType" -> "Organisation"
             )
           )
 

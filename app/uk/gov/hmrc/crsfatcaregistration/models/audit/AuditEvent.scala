@@ -51,3 +51,24 @@ object CreateRegistration {
     Json.format[CreateRegistration]
 
 }
+
+case class UpdateContactDetails(
+  fatcaId: String,
+  affinityType: String,
+  name: Option[String] = None,
+  email: Option[String] = None,
+  telephone: Option[String] = None,
+  firstContactName: Option[String] = None,
+  firstContactEmail: Option[String] = None,
+  firstContactTelephone: Option[String] = None,
+  secondContactName: Option[String] = None,
+  secondContactEmail: Option[String] = None,
+  secondContactTelephone: Option[String] = None
+) extends AuditEvent
+
+object UpdateContactDetails {
+
+  implicit val format: OFormat[UpdateContactDetails] =
+    Json.format[UpdateContactDetails]
+
+}

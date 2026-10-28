@@ -20,7 +20,7 @@ import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.crsfatcaregistration.auth.AdminOnlyAuthAction
-import uk.gov.hmrc.crsfatcaregistration.models.audit.CreateRegistration
+import uk.gov.hmrc.crsfatcaregistration.models.audit.{CreateRegistration, UpdateContactDetails}
 import uk.gov.hmrc.crsfatcaregistration.services.audit.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -54,30 +54,30 @@ class AuditController @Inject() (
               Future.successful(BadRequest(""))
             },
             valid = auditRequest => {
-              auditService.sendCreateRegistration(
-                affinityType = auditRequest.affinityType,
-                registeringAs = auditRequest.registeringAs,
-                registrationType = auditRequest.registrationType,
-                idType = auditRequest.idType,
-                idValue = auditRequest.idValue,
-                tradingName = auditRequest.tradingName,
-                businessName = auditRequest.businessName,
-                addressLine1 = auditRequest.addressLine1,
-                addressLine2 = auditRequest.addressLine2,
-                city = auditRequest.city,
-                region = auditRequest.region,
-                postcode = auditRequest.postcode,
-                country = auditRequest.country,
-                uprn = auditRequest.uprn,
-                dateOfBirth = auditRequest.dateOfBirth,
-                firstContactName = auditRequest.firstContactName,
-                firstContactEmail = auditRequest.firstContactEmail,
-                firstContactTelephone = auditRequest.firstContactTelephone,
-                secondContactName = auditRequest.secondContactName,
-                secondContactEmail = auditRequest.secondContactEmail,
-                secondContactTelephone = auditRequest.secondContactTelephone,
-                fatcaId = auditRequest.fatcaId
+              auditService.sendCreateRegistration(auditRequest)
+
+              Future.successful(NoContent)
+            }
+          )
+    }
+
+  def updateContactDetails: Action[JsValue] =
+    authenticate(parse.json).async {
+      implicit request =>
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+
+        request.body
+          .validate[UpdateContactDetails]
+          .fold(
+            invalid = errors => {
+              logger.warn(
+                s"Unable to validate UpdateContactDetails audit request: $errors"
               )
+
+              Future.successful(BadRequest(""))
+            },
+            valid = auditRequest => {
+              auditService.sendUpdateContactDetails(auditRequest)
 
               Future.successful(NoContent)
             }
